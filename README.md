@@ -1,7 +1,9 @@
 # The Node Experiment - Exploring Async Basics with Rust
 
 本书的目标是带你探索并发编程 (concurrent programming) **为什么需要** 以及 **如何实现** 。
-首先，你会建立起良好的基础知识；然后运用这些知识构建一个受 Node 启发的运行时 (runtime) ，
+
+首先，你会建立起良好的基础知识；
+然后运用这些知识构建一个受 Node 启发的运行时 (runtime) ，
 从而来探究 Node.js 的工作原理。
 
 本书：
