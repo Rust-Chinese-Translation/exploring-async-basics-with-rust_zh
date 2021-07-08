@@ -71,7 +71,8 @@
 
 我强烈建议在你的本机上创建一个项目，跟着本书内容复制粘贴代码，在你的电脑上运行它们。
 
-你也可以从 [repo](https://github.com/cfsamson/examples-node-eventloop) clone 或下载示例代码。
+你也可以从 [examples-node-eventloop](https://github.com/cfsamson/examples-node-eventloop)
+这个 repo clone 或下载示例代码。
 
 ## 预备知识
 
@@ -100,8 +101,6 @@
 > 虽然本书涉及一些复杂的话题，但是出于篇幅原因，不得不很大程度上将它们简化。
 > 你或许能花费一些工夫成为本书所涉及领域的专家，
 > 但目前请允许我没能把这些复杂的话题精确而详尽地阐述 —— 它们本应值得如斯。
-
-
 
 ## 贡献
 
