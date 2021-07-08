@@ -1,32 +1,48 @@
 # The Node Experiment - Exploring Async Basics with Rust
 
-This book aims to take a look at the **why** and **how** of concurrent programming. First we build
-a good foundation of basic knowledge, before we use that knowledge to investigate how Node.js works
-by building a Node-inspired runtime. 
+本书的目标是带你探索并发编程 (concurrent programming) **为什么需要** 以及 **如何实现** 。
+首先，你会建立起良好的基础知识；然后运用这些知识构建一个受 Node 启发的运行时 (runtime) ，
+从而来探究 Node.js 的工作原理。
 
-The rendered version can be found here: [The Node Experiment - Exploring Async Basics with Rust](https://cfsamson.github.io/book-exploring-async-basics/). 
+本书：
+- 英文：
+  [渲染版](https://cfsamson.github.io/book-exploring-async-basics)
+  [repo](https://github.com/cfsamson/book-exploring-async-basics)
+- 中文：
+  [渲染版](https://zjp-cn.github.io/exploring-async-basics-with-rust_zh)
+  [repo](https://github.com/zjp-CN/exploring-async-basics-with-rust_zh)
 
-## Feedback and discussion
+## 反馈与讨论
 
-The issue tracker can be used for all kinds of feedback and/or discussions.
+提交 issue 来进行反馈或者讨论。
 
-## Code example
+## 示例代码
 
-The example code used in this book is found in this repository: [examples-node-eventloop](https://github.com/cfsamson/examples-node-eventloop)
+本书的示例代码放在了这个仓库：
+[examples-node-eventloop](https://github.com/cfsamson/examples-node-eventloop)
 
-## Building
-You'll need to install [mdbook](https://github.com/rust-lang-nursery/mdBook) to build this book for yourself. 
+## 构建本书
 
-Then you can build and open the book:
-``` 
+你需要安装 
+[mdbook](https://github.com/rust-lang-nursery/mdBook) 
+和
+[mdbook-theme](https://github.com/zjp-CN/mdbook-theme)
+来生成本书的渲染版。
+
+使用如下命令构建和浏览：
+
+```cmd
 mdbook build --open
 ```
 
-## Contributing
-Contributions are greatly appreciated, even if it's just spelling, formatting or punctuation mistakes. Please file a PR with the suggested corrections.
+## 贡献本书
 
-If you want to contribute to make this better there are two places to do that:
+欢迎参与贡献，即使只是提交拼写、格式或者标点错误的修正 PR 。
 
-1. [The base repo for this book](https://github.com/cfsamson/book-exploring-async-basics) for all feedback and content changes
-2. [The base repo for the code example we use](https://github.com/cfsamson/examples-node-eventloop) for all improvements to the example code
+1. 可到 [原作 repo](https://github.com/cfsamson/book-exploring-async-basics) 
+提交反馈、内容更正方面的 PR 。
+2. 到 [示例代码 repo](https://github.com/cfsamson/examples-node-eventloop) 
+提交与改进代码相关的 PR 。
+3. 到 [翻译 repo](https://github.com/zjp-CN/exploring-async-basics-with-rust_zh)
+提交翻译相关的 PR 。
 
