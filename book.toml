@@ -25,5 +25,5 @@ theme-dark = "monokai"
 [preprocessor.theme]
 pagetoc = true
 turn-off = true
-sidebar-width = "250px"
+sidebar-width = "260px"
 pagetoc-fontsize = "14px"
