@@ -8,10 +8,10 @@
 
 本书：
 - 英文：
-  [渲染版](https://cfsamson.github.io/book-exploring-async-basics)
+  [渲染版](https://cfsamson.github.io/book-exploring-async-basics) |
   [repo](https://github.com/cfsamson/book-exploring-async-basics)
 - 中文：
-  [渲染版](https://zjp-cn.github.io/exploring-async-basics-with-rust_zh)
+  [渲染版](https://zjp-cn.github.io/exploring-async-basics-with-rust_zh) |
   [repo](https://github.com/zjp-CN/exploring-async-basics-with-rust_zh)
 
 ## 反馈与讨论
