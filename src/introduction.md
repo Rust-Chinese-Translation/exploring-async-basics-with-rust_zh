@@ -96,46 +96,51 @@
 2. 本书**不会**把重点放在代码质量和安全性上，而是把重点放在理解代码背后的概念与想法上。
    本书不得不走捷径来让重点简明扼要。
 3. 我会尽量指出这些捷径及捷径的危险之处，也会尽量指出哪些地方显然可以改进或者走更短的捷径。
-   
+ 
+> 虽然本书涉及一些复杂的话题，但是出于篇幅原因，不得不很大程度上将它们简化。
+> 你或许能花费一些工夫成为本书所涉及领域的专家，
+> 但目前请允许我没能把这些复杂的话题精确而详尽地阐述 —— 它们本应值得如斯。
 
-> Even though we
-> cover some complex topics we'll have to simplify them significantly to be able
-> to learn anything from them in a small(ish) book. You can probably spend the better
-> part of a career becoming an expert in several of the fields we cover, so forgive
-> me already now for not being able to cover all of them with the precision,
-> thoroughness and respect they deserve.
 
-## Credits
 
-Substantial contributions will be credited here.
+## 贡献
 
-## Contributing
+感谢许多人对本书做出贡献。
 
-I have no other interest in this than to share knowledge that can be hard to
-come by and make it easier for the next curious person to understand. If you want to
-contribute to make this better there are two places to go:
+没有什么能比 分享难懂的知识、让下一个好奇的人更容易理解知识 更让我更感兴趣的了！
 
-1. [The base repo for this book](https://github.com/cfsamson/book-exploring-async-basics) for all feedback and content changes
-2. [The base repo for the code example we use](https://github.com/cfsamson/examples-node-eventloop) for all improvements to the example code
+欢迎参与贡献，即使只是提交拼写、格式或者标点错误的修正 PR 。
+你可以到以下 repo 参与贡献。
 
-Everything from spelling mistakes to correcting errors or inaccuracies are greatly appreciated. It will only make this book better for the next person reading it.
+1. 可到 [原作 repo](https://github.com/cfsamson/book-exploring-async-basics) 
+提交反馈、内容更正方面的 PR 。
+2. 到 [示例代码 repo](https://github.com/cfsamson/examples-node-eventloop) 
+提交与改进代码相关的 PR 。
+3. 到 [翻译 repo](https://github.com/zjp-CN/exploring-async-basics-with-rust_zh)
+提交翻译相关的 PR 。
 
-## Why I wrote this and its companion books
+这些贡献会让下一位读者更好地理解这本书。
 
-This started as a wish to write an article about Rust's Futures 3.0. The result so far is
-3 books about concurrency in general and hopefully, at some point a fourth about Rust's Futures exclusively.
+## 由来与姊妹篇
 
-This process has also made me realize why I have vague memories from my childhood
-of threats being made about stopping the car and letting me off if I didn't stop
-asking "why?" to everything.
+我为什么写下这本书，以及姊妹篇？
 
-Basically, the list below is a result of this urge to understand _why_ while
-reading the RFCs and discussions about Rust's async story:
+起初，我只是希望写一篇关于 Rust Futures 3.0 的文章，
+而现在的结果是 3 本关于并发的书， 1 本单独关于 Rust Futures 的书。
+
+这个过程让我意识到了为何会对一段小时候被威胁的记忆十分模糊：
+我不停地对所有事情提 "why?" ，车停了，而我被迫下车。
+
+总之，在阅读 RFCs 和讨论 Rust 异步的时候，我写下了以下一些书：
 
 - [Green threads explained in 200 lines of Rust](https://app.gitbook.com/@cfsamson/s/green-threads-explained-in-200-lines-of-rust/)
 
-- [The Node Experiment - Exploring Async Basics with Rust](https://cfsamson.github.io/book-exploring-async-basics/) (this book)
+- [The Node Experiment - Exploring Async Basics with Rust](https://cfsamson.github.io/book-exploring-async-basics/) （本书）
 
-- [Exploring Epoll, Kqueue and IOCP with Rust](https://github.com/cfsamson/book-exploring-epoll-kqueue-iocp) a companion book to the "Async Basics" book
+- [Exploring Epoll, Kqueue and IOCP with Rust](https://github.com/cfsamson/book-exploring-epoll-kqueue-iocp) （本书的姊妹篇）
 
-- Exploring Rust's Futures (TBD) - a different look on the **why** and **how** of Rust's futures
+- Exploring Rust's Futures[^tbc] （未完成）：从不同的视角看待 Rust Futures
+
+[^tbc]: 译者注：这本书似乎指的是《Futures Explained in 200 Lines of Rust》。已有
+[英文版 (by cfsamson)](https://cfsamson.github.io/books-futures-explained) |
+[中文版 (by nkbai)](https://github.com/nkbai/200-Rust-Futures) 。

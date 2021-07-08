@@ -14,7 +14,7 @@
         margin-left: auto;
         margin-right: auto;
         /* left: calc(90% + (var(--content-min-width))/4 - 110px); */
-        left: 101%;
+        left: 102%;
         position: absolute;
         font-size: var(--pagetoc-fontsize);
     }

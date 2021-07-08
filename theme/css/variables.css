@@ -6,8 +6,62 @@
     --page-padding: 15px;
     --content-max-width: 82%;
     --menu-bar-height: 40px;
-    --pagetoc-width: 13%;
+    --pagetoc-width: 12%;
     --pagetoc-fontsize: 14px;
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
+}
+
+@media only screen and (max-width:1439px) {
+ :root{
+    --content-max-width: 98%;
+  }
 }
 
 @media only screen and (max-width:1439px) {

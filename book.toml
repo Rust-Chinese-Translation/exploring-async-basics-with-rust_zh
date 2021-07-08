@@ -27,3 +27,4 @@ pagetoc = true
 #turn-off = true
 sidebar-width = "230px"
 pagetoc-fontsize = "14px"
+pagetoc-width = "12%"
