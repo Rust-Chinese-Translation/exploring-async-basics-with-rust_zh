@@ -3,7 +3,7 @@ authors = ["Carl Fredrik Samson", "zjp-CN"]
 language = "zh"
 multilingual = true
 src = "src" 
-title = "The Node Experiment - Exploring Async Basics with Rust"
+title = "用 Rust 探索 Async"
 
 [output.html]
 git-repository-url = "https://github.com/zjp-CN/exploring-async-basics-with-rust_zh"
