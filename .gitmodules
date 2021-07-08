@@ -1,0 +1,3 @@
+[submodule "book-exploring-async-basics"]
+	path = book-exploring-async-basics
+	url = https://github.com/cfsamson/book-exploring-async-basics

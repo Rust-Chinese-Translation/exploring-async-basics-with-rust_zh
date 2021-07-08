@@ -1,11 +1,28 @@
 [book]
-authors = ["Carl Fredrik Samson"]
-language = "en"
-multilingual = false
+authors = ["Carl Fredrik Samson", "zjp-CN"]
+language = "zh"
+multilingual = true
 src = "src" 
 title = "The Node Experiment - Exploring Async Basics with Rust"
 
 [output.html]
-theme = "src/theme"
-git-repository-url = "https://github.com/cfsamson/book-exploring-async-basics"
+git-repository-url = "https://github.com/zjp-CN/exploring-async-basics-with-rust_zh"
 google-analytics = "UA-149686420-1"
+default-theme = "ayu"
+additional-css = ["theme/pagetoc.css"]
+additional-js = ["theme/pagetoc.js"]
+
+[output.html.playground]
+editable = true
+
+[output.html.print]
+enable = false
+
+[output.theme-ace]
+theme-white = "xcode"
+theme-dark = "monokai"
+
+[preprocessor.theme]
+pagetoc = true
+sidebar-width = "250px"
+pagetoc-fontsize = "14px"
