@@ -132,7 +132,7 @@
 
 总之，在阅读 RFCs 和讨论 Rust 异步的时候，我写下了以下一些书：
 
-- [Green threads explained in 200 lines of Rust](https://app.gitbook.com/@cfsamson/s/green-threads-explained-in-200-lines-of-rust/)
+- [Green threads explained in 200 lines of Rust](https://app.gitbook.com/@cfsamson/s/green-threads-explained-in-200-lines-of-rust/) （预备知识谈到的书）
 
 - [The Node Experiment - Exploring Async Basics with Rust](https://cfsamson.github.io/book-exploring-async-basics/) （本书）
 

@@ -1,158 +1,181 @@
-# What's the difference between concurrency and parallelism?
+# 并发与并行的区别
 
-Right off the bat, we'll dive into this subject by defining what concurrency is.
-Since it is quite easy to confuse "concurrent" with "parallel", we will try to make
-a clear distinction between the two from the get-go.
+马上要讲定义并发是什么了。
+由于并发 (concurrency) 与并行 (parallel) 很容易被混淆，
+这里尽量清楚地介绍两者的区别。
 
+> 并发是关于在同一时间 **处理** 许多事情。
+>
 > Concurrency is about **dealing** with a lot of things at the same time.
 
+> 并行是关于在同一时间 **做** 许多事情。
+>
 > Parallelism is about **doing** a lot of things at the same time.
 
-We call the concept of progressing multiple tasks at the same time `Multitasking`.
-There are two ways to multitask. One is by **progressing** tasks concurrently,
-but not at the same time. Another is to progress tasks at the exact same time in parallel.
+同一时间进行 (progress) 多个任务被称作多任务 `Multitasking` 。
+
+有两种多任务的方式：
+- 以并发的方式进行任务，但并不在同一时间
+- 真正在同一时间以并行的方式进行任务
 
 ![parallel vs concurrency](./images/definitions.jpg)
 
-## Lets start off with some definitions
+# 从定义出发
 
-### Resource
+## 资源
 
-Something we need to be able to progress a task. Our resources are limited. This
-could be CPU time or memory.
+资源 (resources) 可以是 CPU 的时间或者内存。
 
-### Task
+有时候，任务进行过程中，资源会受到的限制。
 
-A set of operations that requires some kind of resource to progress. A task must
-consist of several sub-operations.
+## 任务
 
-### Parallel
+任务 (tasks) 指一组要求某种资源进行下去的操作。
 
-Something happening independently at the **exact** same time.
+一个任务必须由一些子操作 (sub-operations) 组成。
 
-### Concurrent
+## 并行
 
-Tasks that are **`in progress`** at the same time, but not *necessarily* progressing
-simultaneously.
+并行 (parallel) 是真正在同一时间独立发生的事情。
 
-This is an important distinction. If two tasks are running concurrently,
-but are not running in parallel, they must be able to stop and resume their progress.
-We say that a task is `interruptable` if it allows for this kind of concurrency.
+## 并发
 
-## The mental model I use.
+并发 (concurrency) 描述的是：多个任务在同一时间处于进行的状态中 (in progress)，
+但**不一定**同时进行 (be progressing) 。
 
-I firmly believe the main reason we find parallel and concurrent programming hard to reason about stems from how we model events in our everyday life. We tend to define these terms loosely so our intuition is often wrong.
-> It doesn't help that **concurrent** is defined in the dictionary as: _operating or occurring at the same time_ which
-> doesn't really help us much when trying to describe how it differs from **parallel**
+这是与并行的一个重要区别。
+如果两个任务并发执行，而不并行执行，那么它们必须能停下来和继续进行下去。
+如果一个任务可以按照这种方式并发执行，那么就称这个任务是 “可中断的” `interruptable` 。[^run]
 
-For me, this first clicked when I started to understand why we want to make a distinction between parallel and concurrent in the first place!
+[^run]: 译者注：progress 翻译成 “进行”，run 翻译成 “执行”。两者应该没有区别。
 
-The **why** has everything to do with resource utilization and [efficiency](https://en.wikipedia.org/wiki/Efficiency).
+# 心智模型
 
-> Efficiency is the (often measurable) ability to avoid wasting materials, energy, efforts, money, and time in doing something or in producing a desired result.
+我坚信，很难理解并行和并发编程之间的区别源自于我们每天对事件的理解方式不同。
+我们倾向于不那么严格地定义这两个术语，所以我们的直觉通常是错误的。
 
-### Parallelism
+> 字典里所定义的 “并发” 概念 —— 在同一时间运作或发生 —— 
+> 并不会帮助我们描述并发如何与并行不同。
 
-Is increasing the resources we use to solve a task. It has nothing to do with _efficiency_.
+对我来说，当我理解为何一开始就想弄清楚并发与并行的区别时，我豁然开朗！
 
-### Concurrency
+所有为什么的问题都与资源的效用[^utilization]和[效率]有关。
 
-Has everything to do with efficiency and resource utilization. Concurrency can never make _one single task go faster_.
-It can only help us utilize our resources better and thereby _finish a set of tasks faster_.
+[效率]:https://en.wikipedia.org/wiki/Efficiency
 
-### Let's draw some parallels to process economics
+> 效率指的是做某事或产生期望的结果时，避免浪费物质、能量、努力、金钱和时间的能力，它通常可以测量。
 
-In businesses that manufacture goods, we often talk about LEAN processes. And this is pretty easy to compare with why programmers care so much about what we can achieve if we handle tasks concurrently.
+[^utilization]: 译者注： utilization 效用，这里可能指使用资源带来的（好的）作用。
 
-I'll let let this 3 minute video explain it for me:
+## 并行
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Oz8BR5Lflzg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+并行 (parallelism) 增加了用于完成任务的资源；并行与效率无关。
 
-OK, so it's not the newest video on the subject, but it explains a lot in 3 minutes. Most importantly the gains we try to achieve when applying LEAN techniques, and most importantly: **eliminate waiting and non-value-adding tasks.**
+## 并发
 
-> In programming we could say that we want to avoid `blocking` and `polling` (in a busy loop).
+并发 (concurrency) 与资源的效用和效率都有关。
 
-Now would adding more resources (more workers) help in the video above? Yes, but we use double the resources to produce the same output as one person with an optimal process could do. That's not the best utilization of our resources.
+并发无法让单个任务更快完成，它只能帮助更好地使用资源，从而更快地完成一组任务。
 
-> To continue the parallel we started, we could say that we could solve the problem of a freezing UI while waiting for an I/O event to occur
-> by spawning a new thread and `poll` in a loop or `block` there instead of our main thread. However, that new
-> thread is either consuming resources doing nothing, or worse, using one core to busy loop while checking if
-> an event is ready. Either way, it's not optimal, especially if you run a server you want to utilize fully.
+## 谈谈过程经济学
 
-If you consider the coffee machine as some I/O resource, we would like to start that process, then move on to preparing the
-next job, or do other work that needs to be done instead of waiting.
+在商品制造业中，我们常提到精益过程 (lean processes) 。
+这很容易类比程序员特别关心并发处理任务可以带来什么。
 
-_But that means there are things happening in parallel here?_
+这段三分钟的视频有助于理解：
+[冲咖啡中的精益过程](https://www.youtube.com/watch?v=Oz8BR5Lflzg) 。
 
-Yes, the coffee machine is doing work while the "worker" is doing
-maintenance and filling water. But this is the crux: _Our reference frame is the worker, not the whole system. The guy making coffee is your code._
+<!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/Oz8BR5Lflzg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
 
-> It's the same when you make a database query. After you've sent the query to the database server,
-> the CPU on the database server will be working on your request while you wait for a response. In practice, it's a way
-> of parallelizing your work.
+好了好了，这个视频有些年头，但它在短短三分钟内解释了很多问题。
 
-**Concurrency is about working smarter. Parallelism is a way of throwing more resources at the problem.**
+最重要的是，我们运用精益技术从而获得了好处（提高效率），以及 **减少了等待和无额外价值的任务** 。
 
+> 在编程领域，可以说我们想避免阻塞 `blocking` 和忙轮询[^busy-loop]。
 
-## Concurrency and its relation to I/O
+[^busy-loop]: 译者注：poll in a busy loop 忙轮询，采用死循环方式轮询每一个流。
 
-As you might understand from what I've written so far, writing async code mostly
-makes sense when you need to be smart to make optimal use of your resources.
+增加更多资源（员工）会改进视频里冲咖啡这件事吗？
+答案是，会改进的。但使用了两个员工，结果只和一人冲一杯咖啡一样，而且还有待精简过程。
+此时，增加资源并不会让已有的资源效用最大化。
 
-Now, if you write a program that is working hard to solve a problem, there often is no help
-in concurrency, this is where parallelism comes into play since it gives you
-a way to throw more resources at the problem if you can split it into parts that
-you can work on in parallel.
+> 利用并行，我们可能通过以下方式解决等待 I/O 事件造成 UI 冻结的问题：
+> 开启一个新线程，在新线程上而不是在主线程上轮询或者阻塞。
+> 然而那个新线程要么啥也不做地消耗掉资源，要么更糟糕地使用一个核来忙轮询，检查事件是否准备就绪。
+> 无论哪种情况，都不是最优情况，尤其当你想完全利用服务器 (server) 的资源（完全发挥服务器的效用）。
 
-**I can see two major use cases for concurrency:**
+把咖啡机看作某种 I/O 资源，我们开启一个线程，让线程执行下去，准备下一个任务，
+或者做些其他的工作，这些工作需要立刻执行而不是等待。
 
-1. When performing I/O and you need to wait for some external event to occur
-2. When you need to divide your attention and prevent one task from waiting too long
+不过，这场景是不是以并行方式发生呢？
 
-The first is the classic I/O example: you have to wait for a network
-call, a database query or something else to happen before you can progress a
-task. However, you have many tasks to do so instead of waiting you continue work
-elsewhere and either check in regularly to see if the task is ready to progress
-or make sure you are notified when that task is ready to progress.
+是的，咖啡机在冲着咖啡，而员工在做些护养（保持咖啡机正常工作）、给机器加水，这的确是并行。
 
-The second is an example that is often the case when having a UI. Let's pretend
-you only have one core. How do you prevent the whole UI from becoming unresponsive
-while performing other CPU intensive tasks?
+但以下才是关键：我们站在员工的角度看问题，而不是站在整个系统的角度；冲咖啡的人就像你写的代码。
 
-Well, you can stop whatever task you're doing every 16ms, and run the "update UI"
-task, and then resume whatever you were doing afterwards. This way, you will have
-to stop/resume your task 60 times a second, but you will also have a fully responsive UI which has roughly a 60 Hz refresh rate.
+> 这和你进行数据库查询也是一样的。
+> 你向数据库服务器发送完查询的指令，数据库的 CPU 会依照你的请求工作，而你等待响应。
+> 实际上，你的工作就是一种并行。
 
-## What about threads provided by the OS?
+**并发是更聪明地工作；并行是投入更多资源到问题上。**
 
-We'll cover threads a bit more when we talk about strategies for handling I/O, but I'll mention them here as well. One challenge when using OS threads to understand concurrency
-is that they appear to be mapped to cores. That's not necessarily a correct mental model
-to use even though most operating systems will try to map one thread to one
-core up to the number of threads is equal to the number of cores.
+# 并发与 I/O
 
-Once we create more threads than there are cores, the OS will switch between our
-threads and progress each of them `concurrently` using the scheduler to give each
-thread some time to run. And you also have to consider the fact that your program
-is not the only one running on the system. Other programs might spawn several threads
-as well which means there will be many more threads than there are cores on the CPU.
+你或许明白了现在我写的东西，当你需要更聪明地最优使用资源，编写异步代码基本上很有用。
 
-Therefore, threads can be a means to perform tasks in parallel, but they can also
-be a means to achieve concurrency.
+如果你编写的程序很难解决某个问题，并发通常对此没啥帮助，
+这是并行的主场，因为如果你能把这个问题拆分成可并行处理的小部分，
+那么就能对它投入更多资源。
 
-This brings me over to the last part about concurrency. It needs to be defined
-in some sort of reference frame.
+**我认为在两个主要的场景下使用并发：**
+1. 执行 I/O 操作时，你需要等待某些外部事件发生
+2. 当你需要分散注意力来防止一个任务等待太长时间
 
-## Changing the reference frame
+第一种情况的典型 I/O 例子：
+你不得不等待一个网络调用、数据库查询或任务进行前的发生的某件事情。
+然而你有很多任务要运行，所以你不能干等，你在某些事情上进行着，
+要么定期查看任务是否准备好要进行下去，要么在任务准备好进行下去的时候确保这事被通知到位 (notify) 。
 
-When you write code that is perfectly synchronous from your perspective, stop for a second and consider how that looks from the operating system perspective.
+第二种情况的例子常常发生在 UI 领域。
+假设你的机器只有一个核，在进行其他 CPU 密集型任务的时候，你该怎样阻止整个 UI 无响应呢？
+呃，你可以每 16 ms 停止运行中的任务，然后运行 “更新 UI” 的任务，再恢复原本停下来的任务。
+这样，你就必须每秒停止或恢复任务 60 次，而你也得到一个完全响应式的 UI ，
+这个 UI 大概以 60 Hz 频率刷新。
 
-The Operating System might not run your code from start to end at all. It might stop and resume your process many times. The CPU might get interrupted and handle some inputs while you think it's only focused on your task.
+# OS 提供的线程
 
-So synchronous execution is only an illusion. But from the perspective of you as a programmer, it's not, and that is the important takeaway:
+本书将在 [处理 I/O 的策略] 一章对线程详细介绍，但这里也会提到一些。
+使用 OS 线程理解并发的一个难点是：线程似乎映射到核上。
+即使大多数操作系统尽量把一个线程映射到一个核上，直到线程数等于核数，这未必是正确的心智模型。
 
-**When we talk about concurrency without providing any other context we are using you as a programmer and your code (your process) as the reference frame. If you start pondering about concurrency
-without keeping this in the back of your head it will get confusing very fast.**
+一旦创建超过核数量的线程， OS 会在我们创建的线程间切换，并发地执行每个线程，
+使用调度程序 (scheduler) 来给每个线程一些时间运行。
+你还得考虑到 OS 上不止运行你编写的程序这个事实。
+其他的程序也可能开启 (spawn) 多个线程，这意味着超过 CPU 上的核数的许多线程会存在。
 
-The reason I spend so much time on this is that once you realize that, you'll start to see that some of the things you hear and learn that might seem contradicting really is not. You'll just have to consider the reference frame first.
+因此，线程可能是以并行方式执行任务的一种方式，而且也可能是实现并发的一种方式。
 
-If this still sounds complicated, I understand. Just sitting and reflecting about concurrency is difficult, but if we try to keep these thoughts in the back of our head when we work with async code I promise it will get less and less confusing.
+这涉及此章的最后一部分：在某种参照系中定义。
+
+[处理 I/O 的策略]:./5_strategies_for_handling_io.md
+
+# Changing the reference frame
+
+当你站在自己的角度编写完全同步 (synchronous) 的代码时，
+停下来想想从操作系统的角度这些代码是什么样的。
+
+OS 或许根本不会从头到尾执行你的代码，它或许会多次暂停和恢复你程序所在的线程。
+
+CPU 可能被中断，然后处理一些输入，而你觉得它只忙于你的任务。
+
+所以同步执行只是一场错觉。只是你作为程序员，从你的角度看，同步执行真实存在，而以下是重点：
+
+**在没有任何语境的情况下谈论并发时，你是以程序员和你写的代码（所处的进程）作为参照系的。**
+**你如果没有牢记这一点，那么在思考并发时，很快就糊涂了。**
+
+在这一点上花费很长时间解释，目的是只要你意识到这一点，
+你就会开始察觉到有些你所听闻和学习的东西或许看似矛盾，实则不然。
+你只需要首先思考一下参照系是哪个。
+
+如果这听起来还是很复杂，我能理解你。仅仅坐着就想清楚并发是很难学会并发的。
+但是如果我们试着在处理异步代码时，将这些想法牢记于心，我保证它会变得越来越不令人费解。
