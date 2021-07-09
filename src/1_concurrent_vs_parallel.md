@@ -159,7 +159,7 @@
 
 [处理 I/O 的策略]:./5_strategies_for_handling_io.md
 
-# Changing the reference frame
+# 转换参照系
 
 当你站在自己的角度编写完全同步 (synchronous) 的代码时，
 停下来想想从操作系统的角度这些代码是什么样的。
