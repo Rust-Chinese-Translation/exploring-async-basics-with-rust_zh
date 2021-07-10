@@ -3,7 +3,7 @@
 [简介](./introduction.md)
 - [并发 vs 并行](./1_concurrent_vs_parallel.md)
 - [异步的历史](./2_async_history.md)
-- [操作系统 与 CPU](./3_0_the_operating_system.md)
+- [OS 与 CPU](./3_0_the_operating_system.md)
   - [与 OS 通信](./3_1_communicating_with_the_os.md)
   - [跨平台抽象](./3_2_cross_platform_abstractions.md)
   - [CPU 与 OS](./3_3_the_cpu_and_the_os.md)

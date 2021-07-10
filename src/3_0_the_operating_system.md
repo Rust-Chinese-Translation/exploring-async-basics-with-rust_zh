@@ -1,42 +1,42 @@
-# The Operating System
+# OS
 
-The operating system stands in the centre of everything we do as programmers (well, unless you're [writing an Operating System](https://os.phil-opp.com/) or are in the [Embedded realm](https://rust-embedded.github.io/book/)),
-so there is no way for us to discuss any kind of fundamentals in programming
-without talking about operating systems in a bit of detail.
+在程序员做的所有事情中，OS 都处于中心地位，除非你[写 OS] ，或者在[嵌入式领域]。
+所以无论如何都不能抛开一些 OS 细节谈任何编程基础。
 
-## Concurrency from the operating systems' perspective
+[写 OS]: https://os.phil-opp.com/
+[嵌入式领域]: https://rust-embedded.github.io/book/
 
-<div style="color: back;  font-style: italic; font-size: 1.2em">"Operating systems has been "faking" synchronous execution since the 90s."</div>
+## 从 OS 角度看并发
 
-This ties into what I talked about in the first chapter when I said that `concurrent`
-needs to be talked about within a reference frame and I explained that the OS
-might stop and start your process at any time.
+<div style="color: back;  font-style: italic; font-size: 1.2em">
+“操作系统自 1990s 以来就 ‘假装 ’ 以同步方式执行。”
+</div>
 
-What we call synchronous code is in most cases code that appears as synchronous to us as programmers. Neither the OS or the CPU live in a fully synchronous world.
+这联系起第一章说到的，谈并发需要依照[参照系]，而且我解释了 OS 可能在任何时候停止再开始进程。
 
-Operating systems use `preemptive multitasking` and as long as the operating system you're running is preemptively scheduling processes, you won't have a
-guarantee that your code runs instruction by instruction without interruption.
+大多数情况下，所谓的同步式 (synchronous) 代码是对程序员而言看似同步的代码。
+OS 或 CPU 都不是完全同步式的。
 
-The operating system will make sure that all important processes get some time from the CPU to make progress.
+OS 采用抢占式多任务处理 ([preemptive multitasking]) ，只要你所运行的 OS 正在抢占式调度进程，
+那么你就无法保证你的代码不被中断地逐条指令地运行。
 
-> This is not as simple when we're talking about modern machines with 4-6-8-12
-> physical cores since you might actually execute code on one of the CPU's
-> uninterrupted if the system is under very little load. The important part here
-> is that you can't know for sure and there is no guarantee that your code will be
-> left to run uninterrupted.
+OS 会确保所有重要的线程从 CPU 获取时间再进行下去。
 
-## Teaming up with the OS.
+> 在有 4/5/8/12 个物理核的现代机器上，情况也不是如此简单，
+> 因为你的机器实际可能在很少负荷的时候把代码放到一个 CPU 上不中断地执行完。
+> 这里讨论的重点是：你无法确切地知道到底会发生什么情况，也不能保证你的代码不被中断地执行。
 
-When programming it's often easy to forget how many moving pieces that need to
-cooperate when we care about efficiency. When you make a web request, you're not
-asking the CPU or the network card to do something for you, you're asking the
-operating system to talk to the network card for you.
+[参照系]: ./1_concurrent_vs_parallel.md#转换参照系
+[preemptive multitasking]: ./2_async_history.md#抢占式多任务处理
 
-There is no way for you as a programmer to make your system optimally efficient
-without playing to the strengths of the operating system. You basically don't have
-access to the hardware directly.
+## 与 OS 合作
 
-However, this also means that to understand everything from the ground up, you'll also need to know how your operating system handles these tasks.
+当我们在乎效率时，时常忘了编程需要把多少零部件组装起来。
+你发出一个网络请求时，并不是要求 CPU 或者网卡做什么，而是要求 OS 为你转告网卡做什么。
 
-To be able to work with the operating system, we'll need to know how we can communicate with it and that's exactly what we're going to go through next.
+你无法在不发挥 OS 优势的情况下让程序最高效地运行。你基本上无权直接操作硬件。
+
+可是，这也意味着若从根本上理解所有事情，你还需要知道你的 OS 如何处理这些任务。
+
+为了能与 OS 工作，我们得了解如何与交流（通信），这就是接下来要谈到的话题了。
 
