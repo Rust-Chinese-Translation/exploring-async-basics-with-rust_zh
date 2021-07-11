@@ -112,8 +112,6 @@ CPU 跳转到那个函数，从而把控制权交给 OS 。
 
 # 我们不能改变 CPU 里的页表吗？
 
-But can't we just change the page table in the CPU?
-
 这是优先级 (Privilege Level) 发挥作用的时候了。大多数现代 OS 有两个环形等级 (Ring Levels)：
 内核空间 Ring 0 和用户空间 Ring 3 。
 
