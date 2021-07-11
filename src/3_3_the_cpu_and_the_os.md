@@ -1,8 +1,11 @@
-# Does the CPU cooperate with the Operating System?
+# CPU 与 OS 合作吗？
 
-If you had asked me this question when I first thought I understood how programs work, I would most likely answer no. We run programs on the CPU and we can do whatever we want if we know how to do it. Now, first of all, I wouldn't have thought this through, but unless you learn how this work from the bottom up, it's not easy to know for sure.
+当我初次认为已经理解程序如何工作时，你若问我这个问题，我很可能回答，不，它们不会合作。
+我们在 CPU 上运行程序，而且只要知道怎么做，就可以做任何想做的事情。
+现在的话，首先我还没有想清楚，除非你知道从底层开始的工作机制，
+否则不是那么容易确切地知道这个问题的答案。
 
-**What started to make me think I was very wrong was some code looking like this:**
+让我开始意识到我回答错误的，是类似下面的代码：
 
 ```rust
 #![feature(llvm_asm)]
@@ -23,11 +26,10 @@ fn dereference(ptr: *const usize) -> usize {
 }
 ```
 
-> Here we write a `dereference` function using assembly instructions. We know there
-is no way the OS is involved here.
+> 这里使用汇编指令编写一个 dereference 函数。我们知道这里不可能牵涉到 OS 。
 
-As you see, this code will output `100` as expected. But let's now instead create a pointer with the address `99999999999999` which we know is invalid and see what
-happens when we pass that into the same function:
+这段代码会如期输出 `100` 。但现在，创建一个地址为 `99999999999999` 的指针，
+这不是一个有效的指针，单后看看传进同一个函数会发生什么。
 
 ```rust
 #![feature(llvm_asm)]
@@ -47,85 +49,89 @@ fn main() {
 # }
 ```
 
-Now we get a segmentation fault. Not surprising really, but how does the CPU
-know that we're not allowed to dereference this memory?
+现在会得到一个分段错误 (segmentation fault) 。这不奇怪，但为何 CPU 知道不允许解引用这个内存呢？
 
-- Does the CPU ask the OS if this process is allowed to access this memory location every time we dereference something?
-- Won't that be very slow?
-- How does the CPU know that it has an OS running on top of it at all?
-- Do all CPUs know what a segmentation fault is?
-- Why do we get an error message at all and not just a crash?
+- CPU 询问了 OS 这个进程在每次解引用时都有权访问这个内存地址吗？ 
+- 这个过程会不会很慢？
+- CPU 怎么知道它上面有个 OS 在运行呢？
+- 所有的 CPUs 都知道分段错误是什么吗？
+- 为什么我们得到一个错误信息，而不是单纯的崩溃 (crash) ？
 
-## Down the rabbit hole
+# 深入研究
 
-Yes, this is a small rabbit hole. It turns out that there
-is a great deal of co-operation between the OS and the CPU, but maybe not the way you naively would think.
+事实证明，操作系统和CPU之间有大量的合作，但可能不是你天真地认为的那样。
 
-Many modern CPUs provide some basic infrastructure that Operating Systems use. This infrastructure gives us the security and stability we expect. Actually, most advanced CPUs provide a lot more options than operating systems like Linux, BSD and Windows actually use.
+许多现代 CPUs 提供一些 OS 使用的基础设施。这些基础设施提供安全和稳定。
+实际上，大多数高级 CPUs 提供 OS （比如 Linux、 BSD、 Windows）实际使用的更多选项。
 
-There is especially two that I want to address here:
+这两点我想重点强调：
+1. CPU 如何防止不应该的内存访问
+2. CPU 如何处理 I/O 那样的异步事件
 
-1. How the CPU prevents us from accessing memory we're not supposed to access
-2. How the CPU handles asynchronous events like I/O
+本章会谈论一个问题，第二个问题放在下一章。
 
-_We'll cover the first one here and the second in the next chapter._
+> 如果你想了解更多细节，我强烈建议你阅读 
+> [Philipp Oppermann： Writing an OS in Rust 系列](https://os.phil-opp.com/) 。
+> 它写得很好，会回答上述所有问题，以及更多问题。
 
-> If you want to know more about how this works in detail I will absolutely
-> recommend that you give [Philipp Oppermann's excellent series](https://os.phil-opp.com/)
-> a read. It's extremely well written and will answer all these questions and many more.
+# CPU 如何防止不应该的内存访问
 
-## How does the CPU prevent us from accessing memory we're not supposed to?
+正如上面提到的，现代 CPUs 已经定义了一些基础概念。比如：
+- 虚拟内存 (virtual memory)
+- 页表 (page table)
+- 页面错误 (page fault)
+- 异常 (exceptions)
+- 优先级 ([privilege level])
 
-As I mentioned, modern CPUs have already some definition of basic concepts. Some examples of this are:
+[Privilege level]: https://en.wikipedia.org/wiki/Protection_ring
 
-- Virtual memory
-- Page table
-- Page fault
-- Exceptions
-- [Privilege level](https://en.wikipedia.org/wiki/Protection_ring)
+具体如歌工作取决于具体的 CPU ，所以这里把这些视为一般意义上的术语。
 
-Exactly how this works will differ depending on the exact CPU so we'll treat them
-in general terms here.
+大多数现代 CPUs 有一个内存管理单元 (MMU, Memory Management Unit) 。
+MMU 的任务是将程序中使用的虚拟地址转换为物理地址。
 
-Most modern CPUs, however, have an MMU (Memory Management Unit). This is a part of the
-CPU (often etched on the same dye even). The MMUs job is to translate between
-the virtual address we use in our programs, to a physical address.
+当 OS 开启一个进程（比如我们编写的程序），这会给进程建立一个页表，
+而且会确保 CPU 上的某个特殊寄存器指向这个页表。
 
-When the OS starts a process (like our program) it sets up a page table for our
-process, and makes sure a special register on the CPU points to this page table.
+上面的代码中，我们解引用 `t_ptr` 时，某个时刻这个地址已经传入 MMU ，
+MMU 在页表查找地址、把它转换成内存里的物理地址，而这个地址能获取到数据。
 
-Now, when we try to dereference `t_ptr` in the code above, the address is at some point
-sent to the MMU for translation, which looks it up in the page table to translate
-it to a physical address in memory where it can fetch the data.
+在第一个例子中，它指向栈上拥有 `100` 这个值的内存地址。
 
-In the first case, it will point to a memory address on our stack that holds the value `100`.
+在第二个例子中，传入 `99999999999999` ，要求获取这个地址（解引用）的数据时，
+在页表中查找转换后的地址，结果没能找到。然后 CPU 把这视为一个 “页面错误” 。
 
-When we pass in `99999999999999` and ask it to fetch what's stored at that address
-(which is what dereferencing does) it looks for the translation in the page table but can't find it.
+系统启动时，OS 给 CPU 提供一个中断描述符表 (Interrupt Descriptor Table) 。
+这个表具有预定义的格式，OS 据此对 CPU 可能遇到的预定义的异常提供处理程序。
 
-The CPU then treats this as a `page fault`.
+由于 OS 提供处理页面错误的函数指针，当试图解引用 `99999999999999` 地址时，
+CPU 跳转到那个函数，从而把控制权交给 OS 。
 
-At boot, the OS provided the CPU with an Interrupt Descriptor Table. This table
-has a predefined format where the OS provides handlers for the predefined
-exceptions the CPU can encounter.
+然后 OS 很好地打印了信息，让我们知道遇到了一个叫 `segmentation fault` 的异常信息。
+所以在代码运行的不同 OS 上，这个信息会不一样。
 
-Since the OS provided a pointer to a function that handles `Page Fault` the CPU
-jumps to that function when we try to dereference `99999999999999` and thereby hands over control to the Operating System.
+# 我们不能改变 CPU 里的页表吗？
 
-The OS then prints a nice message for us letting us know that we encountered what it calls a `segmentation fault`. This message will therefore vary depending on the OS you run the code on.
+But can't we just change the page table in the CPU?
 
-## But can't we just change the page table in the CPU?
+这是优先级 (Privilege Level) 发挥作用的时候了。大多数现代 OS 有两个环形等级 (Ring Levels)：
+内核空间 Ring 0 和用户空间 Ring 3 。
 
-Now, this is where `Privilege Level` comes in. Most modern operating systems operate with two `Ring Levels`. Ring 0, the kernel space, and Ring 3, user-space.
+<!-- ![Privilege rings](./images/priv_rings.png) -->
+ <img src="./images/priv_rings.png" width = "40%" height = "40%" alt="Privilege rings" align=center />
 
-![Privilege rings](./images/priv_rings.png)
+ 大多数 CPUs 概念上有多于大多数 OS 使用的环形。这有历史原因的，也正是这个原因使用 `Ring 0` 和
+ `Ring 3` 而不是 1 和 2 。
 
-Most CPUs have a concept of more rings than what most modern operating systems use. This has historical reasons, which is also why `Ring 0` and `Ring 3` are used (and not 1, 2).
+现在，页表中的每个条目都有关于它的额外信息，其中包括关于它所属的环形的信息。此信息是在 OS 启动时设置的。
 
-Now every entry in the page table has additional information about it, amongst that information is the information about what ring it belongs to. This information is set up when your OS boots up.
 
-Code executed in `Ring 0` has almost unrestricted access to external devices, memory and is free to change registers that provide security at the hardware level.
+在 `Ring 0` 中执行的代码几乎可以不受限制地访问外部设备和内存，
+并且可以自由更改在硬件级别提供安全性的寄存器。
 
-Now, the code you write in `Ring 3` will typically have extremely restricted access to I/O and certain CPU registers (and instructions). Trying to issue an instruction or setting a register from `Ring 3` to change the `page table` will be prevented already at the CPU. The CPU will then treat this as an exception and jump to the handler for that exception provided by the OS.
+你在 `Ring 3` 中编写的代码通常对 I/O 和某些 CPU寄 存器（以及指令）的访问极为有限。
+尝试 CPU 已经阻止从 `Ring 3` 级别发出指令或设置寄存器来更改页表。
+然后，CPU 将此视为异常，并跳转到 OS 提供的异常处理程序。
 
-This is also the reason why you have no other choice than to cooperate with the OS and handle I/O tasks through syscalls. The system wouldn't be very secure if this wasn't the case.
+这也是你除了通过系统调用与 OS 合作并处理 I/O 任务之外，别无选择的原因。
+如果不是这样，系统就会很不安全。
