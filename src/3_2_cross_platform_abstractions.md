@@ -1,22 +1,27 @@
-# About writing cross-platform abstractions
+# 跨平台抽象
 
-If you isolate the code needed only for Linux and macOS, you'll see that it's not many lines of code to write. But once you want to make a cross-platform variant, the amount of code explodes.
+如果你的代码只跑在 Linux 或者 macOS 上，你会发现不必写很多行代码。
+但一旦想让代码跨平台运行，代码的数量就会爆炸式增长。
 
-This is a recurring problem when we're curious about how this works on three different platforms, but we need some basic understanding of how the different operating systems work under the covers.
+这是经常遇到的问题，而我们需要对如何在不同 OS 上运行代码的背后有一些基础的了解。
 
-My experience, in general, is that Linux and macOS have simpler API requiring fewer lines of code, and often (but not always) the exact same call works for both systems.
+一般来说，我的经验是， Linux 和 macOS 都有简单一些的 API ，只需很少的代码，
+这两个系统常常（但不总是）有完全相同的调用。
 
-Windows, on the other hand, is more complex, requires you to set up more structures to pass information (instead of using primitives), and often way more lines of code. What Windows does have is very good documentation so even though it's more work you'll also find the official documentation very helpful.
+Windows 则不一样，它更复杂一些，需要你准备更多数据结构来传递信息（而不是使用原生类型），
+而且常常写更多行代码。Windows 有很好的文档，
+所以即使你要做更多工作，但你还是会发现官方文档非常有帮助。
 
-This complexity is why the Rust community (other languages often have something similar) gathers around crates like [libc](https://github.com/rust-lang/libc) which already have defined most methods and constants you need.
+Rust 社区（和其他语言）针对这种复杂的情况开发了像 [libc](https://github.com/rust-lang/libc) 
+这样的库，这些库定义了大多数你需要的方法和常量。
 
-## A note about "hidden" complexity
+# 隐藏的复杂性
 
-There is a lot of "hidden" complexity when writing cross-platform code at this
-level. One hurdle is to get something working, which can prove to be quite a
-challenge. Getting it to work **correctly** and **safely** while covering all
-edge cases is an additional challenge.
+编写跨平台代码时，有很多 “隐藏的” 复杂性。
+一个困难是让某件事**正确又安全**地工作时，边缘情况 (edge cases) 就是一个额外的难题。
 
-**Are we 100% sure that all valid `utf-8` code points which we use in Rust are valid `utf-16` encoded Unicode that Windows will display correctly?**
+你能 100% 确定所有 Rust 中有效的 `utf-8` 代码点 (codepoints) 都是能在
+Windows 上正确显示的 `utf-16` 编码的 Unicode 吗？
 
-I think so, but being 100 % sure about [this is not as easy as one might think](https://en.wikipedia.org/wiki/Comparison_of_Unicode_encodings).
+我觉得是的，但 100% 确定的话就
+[不会那么简单](https://en.wikipedia.org/wiki/Comparison_of_Unicode_encodings) 。
