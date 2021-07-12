@@ -1,17 +1,12 @@
-# Interrupts, Firmware and I/O
+# 中断 | 固件 | I/O
 
-We're nearing an end of the general CS subjects in the book, and we'll start
-to dig our way out of the rabbit hole soon.
+我们就要结束本书通用 CS 的话题了。
 
-This part tries to tie things together and look at how the whole computer works
-as a system to handle I/O and concurrency.
+这一章会把知识联系起来，看看整个电脑是如何作为一个系统来处理 I/O 和并发的。
 
-Let's get to it!
+## 总览
 
-## A simplified overview
-
-Let's go through some of the steps where we imagine that we read from a
-network card:
+以下是从网卡读取数据的流程图：
 
 <a href="./images/AsyncBasicsSimplified.png" target="_blank">
 
@@ -20,140 +15,154 @@ network card:
 </a>
 <p style="font-style: italic; text-align: center;">click the image to open a larger view</p>
 
-> **Disclaimer**
-> We're making things simple here. This is a rather complex operation but we'll
-> focus on what interests us most and skip a few steps along the way.
+> **声明：**
+> 这原本是十分复杂的操作，但这里把事情简化了。我们跳过几步，将重点放在大多数人感兴趣的地方上。
 
-## 1. Our code
+## 1. 解读我们编写的代码
 
-We register a socket. This happens by issuing a `syscall` to the OS. Depending
-on the OS we either get a  `file descriptor` (macOS/Linux) or a `socket` (Windows).
+通过向 OS 发出一个系统调用来注册 (register) 一个 socket 。
+在 macOS/Linux 上会得到 `file descriptor` ，而在 Windows 上得到 `socket` 。
 
-The next step is that we register our interest in `read` events on that socket.
+然后是我们感兴趣的这个 socket 上的 `read` 事件。
 
-## 2. Registering events with the OS
+## 2. 向操作系统注册事件
 
-**This is handled in one of three ways:**
+有三种不同的处理方式：
 
 <ol type="A">
 <li>
-We tell the operating system that we're interested in `Read` events but we want
-to wait for it to happen by `yielding` control over our thread to the OS. The OS
-then suspends our thread by storing the register state and switches to some
-other thread.
 
-**From our perspective this will be blocking our thread until we have data to read.**
+告诉 OS 我们对 `Read` 事件感兴趣，但我们希望等待线程的控制权让给 OS 来让 `Read` 事件发生。
+然后 OS 通过存储寄存器状态挂起线程，再切换到其他线程。
+
+**从我们的角度看，在有数据可读之前，这会阻塞线程。**
 </li>
 <li>
-We tell the operating system that we're interested in `Read` events but we
-just want a handle to a task which we can `poll` to check if the event is ready
-or not.
 
-**The OS will not suspend our thread, so this will not block our code**
+告诉 OS 我们对 `Read` 事件感兴趣，但我们只希望获取任务的句柄，通过轮询 `poll` 来检查事件是否准备好。
+
+**OS 不会挂起线程，所以这不会阻塞代码。**
 </li>
 <li>
-We tell the operating system that we are probably going to be interested in
-many events, but we want to subscribe to one event queue. When we `poll` this
-queue it will block until one or more event occurs.
 
-**This will block our thread while we `wait` for events to occur**
+告诉 OS 我们可能对许多事件感兴趣，但我们希望订阅一个事件队列。
+当轮询这个队列时，在一个或更多事件发生之前，会发生阻塞。
+
+**当我们等待时间发生时，这会阻塞线程。**
 </li>
 </ol>
 
-> My next book will be about alternative C since that is a very interesting
-> model of handling I/O events that's going to be important later on to understand
-> why Rust's concurrency abstractions are modeled the way they are. For that reason
-> we won't cover this in detail here.
+> 我的下一本书将是关于替代 C 的，因为它是一个非常有趣的处理 I/O 事件的模型，
+> 这对于理解为什么 Rust 的并发抽象是这样建模的很重要。因此，这里不作详细介绍。
 
-## 3. The Network Card
+## 3. 网卡
 
-> We're skipping some steps here but it's not very vital to our understanding.
+> 我们会跳过一些对理解这个话题不太重要的步骤。
 
-Meanwhile on the network card there is a small microcontroller running
-specialized firmware. We can imagine that this microcontroller is polling in a
-busy loop checking if any data is incoming.
+在网卡上有一个运行专用固件的微型控制器。我们可以想象这个微型控制器是在一个忙轮询检查是否有数据传入。
 
-> The exact way the Network Card handles its internals can be different from this
-> (and most likely is). The important part is that there is a very simple but specialized CPU running
-> on the network card doing **work** to check if there are incoming events.
+> 网卡处理其内部的确切方式很可能与此不同。
+> 重点是，网卡上有一个非常简单但专门用于检查是否有传入事件的 CPU 。
 
-Once the firmware registers incoming data, it issues a Hardware Interrupt.
+一旦硬件接收传入的数据，它就会发出硬件中断 (Hardware Interrupt) 。
 
-## 4. Hardware Interrupt
+## 4. 硬件中断
+> 这是一个简化版的解释。如果你想深入了解，建议你阅读 Robert Mustacchi 的文章
+> [Turtles on the wire: understanding how the OS uses the modern NIC](https://www.joyent.com/blog/virtualizing-nics) 。
 
-> This is a very simplified explanation. If you're interested in knowing more
-> about how this works, I can recommend Robert Mustacchi's excellent article
-[Turtles on the wire: understanding how the OS uses the modern NIC](https://www.joyent.com/blog/virtualizing-nics).
+现代 CPU 有一组 `Interrupt Request Lines` （中断请求线） 来处理发生自外部设备的事件。
+CPU 有一组固定的中断线。
 
-Modern CPUs have a set of `Interrupt Request Lines` for it to handle events that occur from
-external devices. A CPU has a fixed set of interrupt lines.
+硬件中断 (hardware interrupt) 是一种随时可以发生的电信号。
+CPU 立刻**中断**其正常工作流程，通过存储其寄存器的状态并查找中断处理程序来处理中断。
+中断处理程序 (interrupt handler) 在中断描述符表 (Interrupt Descriptor Table) 中定义。
 
-A hardware interrupt is an electrical signal that can occur at _any time_. The
-CPU immediately **interrupts** its normal workflow to handle the interrupt by
-saving the state of its registers and looking up the interrupt handler. The interrupt handlers are defined in the Interrupt Descriptor Table.
+## 5. 中断处理程序
 
-## 5. Interrupt Handler
+中断描述符表 [Interrupt Descriptor Table (IDT)] 是 OS 或驱动程序为可能发生的中断而注册处理程序的表。
+每个入口 (entry) 都指向一个特定中断的处理函数。网卡的处理函数通常由网卡的驱动程序 (driver) 注册和处理。
 
-The [Interrupt Descriptor Table (IDT)](https://en.wikipedia.org/wiki/Interrupt_descriptor_table) is a table where the OS (or a driver) registers handlers for different interrupts that may occur. Each entry points to a handler function for a specific interrupt. The handler function for a Network Card would typically be registered and handled by a `driver` for that card.
+[Interrupt Descriptor Table (IDT)]: https://en.wikipedia.org/wiki/Interrupt_descriptor_table
 
-> The IDT is not stored on the CPU as it might seem in the diagram. It's located
-> in a fixed and know location in main memory. The CPU only holds a pointer to the
-> table in one of it's registers.
+> IDT 在图中看起来像存储在 CPU 上，而实际并不是。
+> IDT 位于主内存 (main memory) 的固定位置上。
+> CPU 只在它的某个寄存器上保存指向这个表的指针。
 
-## 6. Writing the data
+## 6. 写入数据
 
-This is a step that might vary a lot depending on the CPU and the firmware on the
-network card. If the Network Card and the CPU supports [Direct Memory Access](https://en.wikipedia.org/wiki/Direct_memory_access) (which should be the standard on all modern systems today) the Network Card will write data directly to a set of buffers the OS already has set up in main memory.
+这一步很不一样，因为取决于 CPU 和网卡上的硬件。
+如果网卡和 CPU 支持[直接内存访问][Direct Memory Access]（这在所有现代系统上应该都有），
+那么网卡会直接把数据写到一组 OS 已经在主内存设置的缓冲区。
+在这样的系统上，网卡上的硬件可能在数据写入内存时发出中断。
+`DMA` 十分高效，因为在数据已经在内存时，才会通知 CPU 。
+在旧系统上，CPU 需要投入资源来处理网卡的数据传输。
 
-In such a system the `firmware` on the Network Card might issue an `Interrupt` when the data is **written** to memory. `DMA` is very efficient
-since the CPU is only notified when the data is already in memory. On older systems the
-CPU needed to devote resources to handle the data transfer from the
-network card.
+[Direct Memory Access]: https://en.wikipedia.org/wiki/Direct_memory_access
 
-_The DMAC (Direct Memory Access Controller) is just added since in such a system,
-it would control the access to memory. It's not part of the CPU as in the
-diagram above. We're deep enough in the rabbit hole now and this is not really important for us right now so let's move on._
+DMAC （Direct Memory Access Controller 直接存储器存取控制器） 会控制内存访问。
+它不是 CPU 的一部分。我们已经够深入了，现在这些对我们来说不太重要，让我们继续往下。
 
-## 7. The driver
+## 7. 驱动程序
 
-The `driver` would normally handle the communication between the OS and the Network Card.
-At _some point_ the buffers are filled, and the network card issues an `Interrupt`. The CPU then jumps to the handler of that interrupt. The interrupt handler for this exact type
-of interrupt is registered by the driver, so it's actually the driver that handles this event and in turn informs the kernel that the data is ready to be read.
+驱动程序 (driver) 通常处理 OS 与网卡之间的通信。
+缓冲区已满时，网卡发出中断 (interrupt) 。然后 CPU 跳到中断的处理程序 (handler) 。
+这种中断类型的中断处理程序是由驱动程序注册的，因此实际上是驱动程序处理这个事件，
+然后通知内核数据已经准备好被读取。
 
-## 8. Reading the data
+## 8. 读取数据
 
-Depending on whether we chose alternative A, B or C the OS will:
+根据我们是选择 A、B 还是 C 选项，OS 将：
 
-1. Wake our thread
-2. Return `Ready` on the next `poll`
-3. Wake the thread and return a `Read` event for the handler we registered.
+<ol type="A">
+<li>
 
-## Interrupts
+唤起线程
+</li>
 
-As I hinted at above, there are two kinds of interrupts:
+<li>
 
-1. Hardware Interrupts
-2. Software Interrupts
+在下一次轮询 `poll` 时返回 `Ready`
+</li>
 
-They are very different in nature.
+<li>
 
-### Hardware Interrupts
+唤起线程，并返回一个 `Read` 事件给我们注册的处理程序
+</li>
+</ol>
 
-Hardware interrupts are created by sending an electrical signal through an [Interrupt Request Line (IRQ)](https://en.wikipedia.org/wiki/Interrupt_request_(PC_architecture)#x86_IRQs). These hardware lines signals the CPU directly.
+## 中断
 
-### Software Interrupts
+有两种中断方式：
+1. 硬件中断 (Hardware Interrupts)
+2. 软件终端 (Software Interrupts)
 
-These are interrupts issued from software instead of hardware. As in the case of a hardware interrupt, the CPU jumps to the Interrupt Descriptor Table and runs the handler for the specified interrupt.
+它们具有不同的性质：
 
-### Firmware
+### 硬件中断
 
-Firmware doesn't get much attention from most of us; however, they're a crucial part of the world we live in. They run on all kinds of hardware, and have all kinds of strange and peculiar ways to make the computer we program on work.
+硬件中断由 [IRQ (Interrupt Request Line)] 发送电信号创建。这些硬件线路直接向CPU发送信号。
 
-When I think about firmware, I think about the scenes from Star Wars where they walk into a bar with all kinds of strange and obscure creatures. I imagine the world of firmware is much like this, few of us know what they do or how they work on a particular system.
+[IRQ (Interrupt Request Line)]: https://en.wikipedia.org/wiki/Interrupt_request_(PC_architecture)#x86_IRQs
 
-Now, firmware needs a microcontroller or similar to be able to work. Even the CPU has firmware which makes it work. That means there are many more small "CPUs" on our system than the cores we program against.
+### 软件中断
 
-Why is this important? Well, you remember that concurrency is all about efficiency right? Well, since we have many CPU's already doing work for us on our system, one of our concerns is to not replicate or duplicate that work when we write code.
+从软件中断，而不是从硬件中断。
+在硬件中断的情况下，CPU跳转到中断描述符表并运行指定中断的处理程序。
 
-If a network card has firmware that continually checks if new data has arrived, it's pretty wasteful if we duplicate that by letting our CPU continually check if new data arrives as well. It's much better if we either check once in a while or even better, gets notified when data has arrived for us.
+### 硬件
+
+固件并没有得到我们大多数人的关注；然而，他们是我们所生活的世界的重要组成部分。
+它们运行在各种各样的硬件上，并且有各种奇怪和奇特的方法使我们编写程序的计算机工作。
+
+当我想到固件的时候，我会想到《星球大战》里的场景，他们走进酒吧，里面有各种奇怪而晦涩的生物。
+我想象固件的世界是这样的，很少有人知道它们在一个特定的系统上做什么或者如何工作。
+
+现在，固件需要微型控制器或类似的东西才能工作。甚至 CPU 也要有固件才能工作。
+这意味着在我们的系统中有比我们编程所针对的内核还有更多的小 CPUs 。
+
+为什么这很重要？好吧，你还记得并发是关于效率的吧？
+因为我们的系统中已经有很多 CPU 在为我们工作，所以我们的一个关注点是在编写代码时不要重复或复制这些工作。
+
+如果网卡的固件不断地检查新数据是否到达，那么如果我们再重复地让 CPU 不断地检查新数据是否到达，
+就将是相当浪费的。如果我们偶尔检查一下，或者在数据到达时及时通知，那就更好了。
 
