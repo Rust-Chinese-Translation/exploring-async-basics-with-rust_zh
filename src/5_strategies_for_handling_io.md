@@ -1,64 +1,84 @@
-# Strategies for handling I/O
+# 处理 I/O 的策略
 
-Before we dive into Writing some code we'll finish off this part of the book talking a bit about different strategies of handling I/O and concurrency. Now, just note that I'm covering I/O in general here, but I use network communication as the main example. Different strategies can have different strengths depending on what type of I/O we're talking about.
+在我们深入编写一些代码之前，我们将讨论处理 I/O 和并发的不同策略来结束本书的这一部分。
+请注意，我会在这里概括地介绍 I/O，但使用网络通信 (network communication) 作为主要示例。
+不同的策略可以有不同的优势，这取决于 I/O 类型。
 
-## 1. Using OS threads
 
-Now one way of accomplishing this is letting the OS take care of everything for us. We do this by simply spawning a new OS thread for each task we want to accomplish and write code like we normally would.
+## 1. 使用 OS 线程
 
-**Pros:**
+第一种方法是让 OS 为我们处理一切。
+我们通过给我们想要完成的每个任务生成 (spawn) 一个新的 OS 线程来做到这一点，
+并像往常一样编写代码。
 
-- Simple
-- Easy to code
-- Reasonably performant
-- You get parallelism for free
+**优点：**
 
-**Cons:**
+- 简单 
+- 易于编写
+- 性能还不错 
+- 免费（不费力气地）获得并行性
 
-- OS level threads come with a rather large stack. If you have many tasks waiting simultaneously (like you would in a web-server under heavy load) you'll run out of memory pretty soon.
-- There are a lot of syscalls involved. This can be pretty costly when the number of tasks is high.
-- The OS has many things it needs to handle. It might not switch back to your thread as fast as you'd wish
-- The OS doesn't know which tasks to prioritize, and you might want to give some tasks a higher priority than others.
+**缺点：**
 
-## 2. Green threads
+- OS 线程具有相当大的堆栈。
+  如果你有许多任务同时等待（就像在重负载情况下的网络服务器中一样），内存很快就会耗尽。
+- 涉及很多系统调用。当任务数量很高时，这可能会非常昂贵。
+- OS 有很多事情需要处理。它可能不会像您希望的那样快速切换回您的线程
+- OS 不知道优先处理哪些任务，您可能希望为某些任务赋予比其他任务更高的优先级。
 
-Another common way of handling this is green threads. Languages like Go uses this to great success. In many ways this is similar to what the OS does but the runtime can be better adjusted and suited to your specific needs.
+## 2. 绿色线程
 
-**Pros:**
+另一种常见的处理方式是绿色线程。像 Go 这样的语言使用它取得了巨大成功。
+绿色线程在许多方面与 OS 线程的功能相似，但绿色线程可以更好地调整运行时并适合您的特定需求。
 
-- Simple to use for the user. The code will look like it does when using OS threads
-- Reasonably performant
-- Abundant memory usage is less of a problem
-- You are in full control over how threads are scheduled and if you want you can prioritize them differently.
+**优点：**
 
-**Cons:**
+- 使用简单。代码看起来像使用 OS 线程一样。
+- 性能还不错。
+- 大量内存使用不是问题。
+- 您可以完全控制线程的调度方式，如果需要，您可以给不同线程的不同的优先级。
 
-- You need a runtime, and by having that you are duplicating part of the work the OS already does. The runtime will have a cost which in some cases can be substantial.
-- Can be difficult to implement in a flexible way to handle a wide variety of tasks
+**缺点：**
 
-## 3. Poll based event loops supported by the OS
+- 您需要一个运行时，并且通过它来重复 OS 已经完成的一些工作。
+  在某些情况下，运行时将产生可能很大的成本。
+- 可能难以以灵活的方式实施以处理各种任务。
 
-The third way we're covering today is the one that most closely matches an ideal solution. In this solution we register an interest in an event, and then let the OS tell us when it's ready.
+## 3. OS 支持的基于轮询的事件循环
 
-The way this works is that we tell the OS that we're interested in knowing when data is arriving for us on the network card. The network card issues an interrupt when something has happened, in which case the driver lets the OS know that the data is ready.
+第三种方式是最接近理想解决方案的方式。
+在这个解决方案中，我们注册 (register，可以理解为记录) 一个感兴趣的事件，
+然后让 OS 告诉我们数据什么时候准备好了。
 
-Now, we still need a way to "suspend" many tasks while waiting, and this is where Node's "runtime" or Rust's Futures come in to play.
+它的工作方式是：我们告诉 OS 我们对数据何时到达网卡上感兴趣。
+当发生某些事情时，网卡会发出中断，此时，驱动程序 (driver) 会让 OS 知道数据已准备就绪。
 
-**Pros:**
+现在，我们仍然需要一种在等待过程中“暂停”任务的方法，
+这就是 Node 的“运行时” (runtime) 或 Rust 的 Futures 发挥作用的地方。
 
-- Close to optimal resource utilization
-- It's very efficient
-- Gives us the maximum amount of flexibility to decide how to handle the events that occurs
+**优点：**
 
-**Cons:**
+- 接近最佳资源利用率
+- 它非常高效
+- 给我们最大的灵活性来决定如何处理发生的事件
 
-- Different operating systems have different ways of handling these kind of queues. Some of them are difficult to reconcile with each other. Some operating systems have limitations on what I/O operations support this method.
-- Great flexibility comes with a good deal of complexity
-- Difficult to write an ergonomic API with an abstraction layer that accounts for the differences between the operating systems without introducing unwanted costs.
-- Only solves part of the problem—the programmer still needs a strategy for suspending tasks that are waiting.
+**缺点：**
 
-## Final note
+- 不同的操作系统有不同的方式来处理这些队列。其中一些很难相互协调。某些操作系统对支持此方法的 I/O 操作有限制。
+- 极大的灵活性伴随着大量的复杂性。
+- 难以编写抽象层的、符合人体工程学的 API，
+  因为当前 API 在不引入不必要的成本的情况下负责处理 OS 之间的差异。
+- 只解决了部分问题 —— 程序员仍然需要一种策略来暂停正在等待的任务。
 
-The Node runtime uses a combination of both 1 and 3, but it tries to force all I/O to use alternative 3. This design is also part of the reason why Node is so good at handling many connections concurrently.  Node uses a callback-based approach to suspend tasks.
+## 最后说明
 
-Rust's async story is modeled around option 3, and one of the reasons it has taken a long time is related to the _cons_ of this method and choosing a way to model how tasks should be suspended. Rust's Futures model a task as a [State Machine](https://en.wikipedia.org/wiki/Finite-state_machine) where a suspension point represents a `state`.
+Node runtime 组合了第 1 和第 3 种方法，但它试图强制所有 I/O 使用方法 3 。
+这种设计也是 Node 非常擅长并发处理许多连接的部分原因。
+Node 使用基于回调的方法来暂停任务。
+
+Rust 的异步是围绕方法 3 建模的，它花费很长时间来稳定异步，
+其中一个原因与以下两点有关：方法 3 的缺点、选择一种方法建立“任务应该如何暂停”的模型。
+Rust 的 futures 将任务建模为
+[状态机](https://en.wikipedia.org/wiki/finite-state_machine) 
+(State Machine)，
+其中暂停点 (suspension point) 代表“状态”。
