@@ -1,94 +1,105 @@
-# Epoll, Kqueue and IOCP
+# Epoll, Kqueue 和 IOCP
 
-There are some well-known libraries which implement a cross platform event queue using Epoll, Kqueue and IOCP for Linux, Mac, and Windows, respectively.
+有一些著名的库分别使用 Epoll、Kqueue 和 IOCP 为 Linux、Mac 和 Windows 实现了跨平台事件队列。
 
-Part of Node's runtime is based on [libuv](https://github.com/libuv/libuv), which is a cross platform
-asynchronous I/O library. `libuv` is not only used in Node but also forms the foundation
-of how [Julia](https://julialang.org/) and [Pyuv](https://github.com/saghul/pyuv) create a cross platform event queue; most
-languages have bindings for it.
+Node 的运行时有一部分基于 [libuv](https://github.com/libuv/libuv) ，这是一个跨平台的异步 I/O 库。
+`libuv` 不仅在 Node 中使用，还构成了
+[Julia](https://julialang.org/) 和 [Pyuv](https://github.com/saghul/pyuv) 
+创建跨平台的基础事件队列；大多数语言都有绑定 `libuv` 。
 
-In Rust we have [mio - Metal IO](https://github.com/tokio-rs/mio). `Mio` powers the OS event queue used in [Tokio](https://github.com/tokio-rs/tokio), which is a runtime that provides I/O, networking, scheduling etc. `Mio` is to `Tokio` what `libuv` is to `Node`.
+在 Rust 中，我们有 [mio: Metal IO](https://github.com/tokio-rs/mio)。
+`Mio` 为 [tokio](https://github.com/tokio-rs/tokio) 中使用的操作系统事件队列提供支持，
+这是一个提供 I/O 、网络、调度等功能的运行时。
+`Mio` 对于 `tokio` 正如 `libuv` 对于 `Node` 那样重要。
 
-`Tokio` powers many web frameworks, among those is [Actix Web](https://github.com/actix/actix-web), which is known to be very performant.
+`tokio` 为许多 Web 框架提供支持，其中包括众所周知的、非常高效的
+[Actix Web](https://github.com/actix/actix-web) 。
 
-Since we want
-to understand how everything works, I decided to create an extremely
-simplified version of an event queue. I called it `minimio` since it's greatly inspired by `mio`.
+由于我们想了解一切是如何工作的，我决定写一个极其简化的事件队列版本。
+我称它为 `minimio` ，因为它极大地受到了 `mio` 的启发。
 
-> I have written about how this works in detail in [Epoll, Kqueue and IOCP explained](https://cfsamsonbooks.gitbook.io/epoll-kqueue-iocp-explained/).
-> In that book we also create the event loop which we will use as the cross platform event loop in this book. You can visit the code at its [Github repository if you're
-> curious](https://github.com/cfsamson/examples-minimio).
+> 我在 [Epoll, Kqueue and IOCP explained] 一书中详细描述了它们是如何工作的，而且在那本书中，
+> 我还写了一个将在本书中用作跨平台的事件循环。如果你很好奇的话，可以访问
+> [github repo](https://github.com/cfsamson/examples-minimio) 中的代码。
 
-Nevertheless, we'll give each of them a brief introduction here so you know the basics.
+[Epoll, Kqueue and IOCP explained]: https://cfsamsonbooks.gitbook.io/epoll-kqueue-IOCP-explained
 
-## Why use an OS-backed event queue?
+尽管如此，本书还是会简要介绍它们，以便你了解基础知识。
 
-If you remember my previous chapters, you know that we need to cooperate closely
-with the OS to make I/O operations as efficient as possible. Operating systems like
-Linux, macOS and Windows provide several ways of performing I/O, both blocking and
-non-blocking.
+# 为什么使用 OS 支持的事件队列？
 
-So blocking operations are the least flexible to use for us as programmers since we yield control to the OS, which suspends our thread. The big advantage is that our thread gets woken up once the event we're waiting for is ready.
+如果您还记得之前的章节，您就会知道我们需要与操作系统密切合作，以使 I/O 操作尽可能高效。
+像 Linux、Macos 和 Windows 这样的操作系统提供了几种执行 I/O 的方式，包括阻塞和非阻塞。
 
-Non-blocking methods are more flexible but need to have a way to tell us if a task is ready or not. This is most often done by returning some kind of data that says if it's `Ready` or `NotReady`. One drawback is that we need to check this status regularly to be able to tell if the state has changed.
+所以阻塞操作对我们程序员来说是最不灵活的，因为我们将控制权交给操作系统，它挂起我们的线程。
+最大的优点是一旦我们等待的事件准备好，我们的线程就会被唤醒。
 
-Event queuing via Epoll/kqueue/IOCP is a way to enjoy the flexibility of a non-blocking method without its aforementioned drawback.
+非阻塞方法更灵活，但需要有一种方法来告诉我们任务是否准备就绪。
+这通常是通过返回某种数据来完成的，这些数据表明它是“准备好” `Ready` 还是“未准备好” `NotReady` 。
+一个缺点是我们需要定期检查此状态才能判断状态是否已更改。
 
-> We will not cover methods like `poll` and `select`, but I have an [article for you
-> here](http://web.archive.org/web/20190112082733/https://people.eecs.berkeley.edu/~sangjin/2012/12/21/epoll-vs-kqueue.html)
-> if you want to learn a bit about these methods and how they differ from `epoll`.
+通过 Epoll/Kqueue/IOCP 进行事件队列发挥了非阻塞方法的灵活性，且没有上述缺点。
 
-## Readiness-based event queues
+> 这里不会介绍 `poll` 和 `select` 之类的方法，但如果你想了解一下这些方法以及它们与 `epoll` 的区别，
+> 你可以看看这篇 [文章：epoll-vs-kqueue] 。
 
-Epoll and Kqueue are known as readiness-based event queues, which means they let you know when an action is ready to be performed.  An example of this is a socket that is ready to be read from.
+[文章：epoll-vs-kqueue]:http://web.archive.org/web/20190112082733/https://people.eecs.berkeley.edu/~sangjin/2012/12/21/epoll-vs-kqueue.html
 
-**Basically this happens when we want to read data from a socket using epoll/kqueue:**
+# 基于就绪状态的事件队列
 
-1. We create an event queue by calling the syscall `epoll_create` or `kqueue`.
-2. We ask the OS for a file descriptor representing a network socket.
-3. Through another syscall, we register an interest in `Read` events on this socket. It's important that we also inform the OS that we'll be expecting to receive a notification when the event is ready in the event queue we created in (1).
-4. Next, we call `epoll_wait` or `kevent` to wait for an event. This will block (suspend) the thread it's called on.
-5. When the event is ready, our thread is unblocked (resumed), and we return from our "wait" call with data about the event that occurred.
-6. We call `read` on the socket we created in 2.
+Epoll 和 Kqueue 被称为基于就绪状态 (Ready-based) 的事件队列，
+这意味着它们会让您知道何时准备执行操作。
+一个例子是准备好被读取的 socket 。
 
-## Completion-based event queues
+**当我们想使用 epoll/kqueue 从 socket 读取数据时，基本上会发生如下情况：**
 
-IOCP stands for I/O Completion Ports and is a completion-based event queue. This type of queue notifies you when events are completed.  An example of this is when data has been read into a buffer.
+1. 我们通过调用系统调用 `epoll_create` 或 `kqueue` 来创建一个事件队列。 
+2. 我们向操作系统询问代表网络 socket 的文件描述符。 
+3. 通过另一个系统调用，我们在这个 socket 上注册了对感兴趣的 `Read` 事件。
+   重要的是，我们还通知操作系统，当事件在我们在 (1) 中创建的事件队列中准备就绪时，我们将收到通知。 
+4. 接下来，我们调用 `epoll_wait` 或 `kevent` 来等待一个事件。这将阻塞（挂起）事件被调用的线程。 
+5. 当事件准备好时，线程被解除阻塞（恢复），我们从“等待”调用中返回事件发生的数据。 
+6. 在 (2) 中创建的 socket 上调用 `read`。
 
-Below is a basic breakdown of what happens in this type of event queue:
+# 基于完成状态的事件队列
 
-1. We create an event queue by calling the syscall `CreateIoCompletionPort`.
-2. We create a buffer and ask the OS to give us a handle to a socket.
-3. We register an interest in `Read` events on this socket with another syscall,
-   but this time we also pass in the buffer we created in (2) to which the data will
-   be read.
-4. Next, we call `GetQueuedCompletionStatusEx`, which will block until an event has
-   completed.
-5. Our thread is unblocked, and our buffer is now filled with the data we're interested in.
+IOCP (Input/Output Completion Port) 代表 I/O 完成端口，
+是一个基于完成状态 (completion-based) 的事件队列。
+这种类型的队列会在事件完成时通知您。一个例子是数据被读入缓冲区。
 
-## Epoll
+以下是此类事件队列中发生的情况的基本细分：
 
-`Epoll` is the Linux way of implementing an event queue. In terms of functionality, it has a lot in common with `Kqueue`. The advantage of using `epoll` over other similar methods on Linux like `select` or `poll` is that `epoll` was designed to work very efficiently with a large number of events.
+1. 我们通过调用 `CreateIoCompletionPort` 这个系统调用来创建一个事件队列。 
+2. 我们创建一个缓冲区，并要求操作系统给我们一个 socket 的句柄 (handle) 。 
+3. 我们使用另一个系统调用在这个 socket 上注册感兴趣的 `read` 事件，
+   但这次我们也传入了我们在 (2) 中创建的缓冲区，数据将被读取到该缓冲区。 
+4. 接下来，我们调用 `GetQueuedCompletionStatusEx` ，它将阻塞线程直到事件完成。 
+5. 我们的线程被解除阻塞，缓冲区现在存满了我们感兴趣的数据。
 
-### Kqueue
+# Epoll
 
-`Kqueue` is the macOS way of implementing an event queue, which originated from BSD, in operating systems such as FreeBSD, OpenBSD, etc. In terms of high level functionality,
-it's similar to `Epoll` in concept but different in actual use.
+`epoll` 是 Linux 实现事件队列的方式。在功能方面，它与 `kqueue` 有很多共同点。
+在 Linux 上使用 `epoll` 比使用 `select` 或 `poll` 等其他类似方法的优势在于
+`epoll` 旨在非常有效地处理大量事件。
 
-Some argue it's a bit more complex to use and a bit more abstract and "general".
+## Kqueue
 
-### IOCP
+`kqueue` 是 macOS 实现事件队列的方式，起源于 BSD ，存在于 FreeBSD、OpenBSD 等操作系统中。
+从高层次的功能来看，它在概念上与 `epoll` 类似，但在实际使用上有所不同。
 
-`IOCP` or Input Output Completion Ports is the way Windows handles this type of event queue.
+有些人认为它使用起来更复杂，更抽象和“通用”。
 
-A `Completion Port` will let you know when an event has `Completed`. Now this might
-sound like a minor difference, but it's not. This is especially apparent when you want to write a library since abstracting over both means you'll either have to model `IOCP` as `readiness-based` or model `epoll/kqueue` as completion-based.
+## IOCP
 
-Lending out a buffer to the OS also provides some challenges since it's very
-important that this buffer stays untouched while waiting for an operation to
-return.
+`IOCP` （Input/Output Completion Port，输入输出完成端口）是 Windows 处理此类事件队列的方式。
 
-> My experience investigating this suggests that getting `readiness-based`
-> models to behave like the `completion-based` models is easier than the other
-> way around. This means you should get IOCP to work first and then fit `epoll` or `kqueue`
-> into that design.
+“完成端口”会在事件“完成”时通知您。现在这听起来可能是一个微小的区别，但事实并非如此。
+当您想编写一个库时，这一点尤其明显，因为对两者进行抽象意味着您必须将
+`IOCP` 基于就绪状态进行建模 (readiness-based) 或将 
+`epoll/kqueue` 基于完成状态的建模 (completion-based) 。
+
+将缓冲区借给操作系统也带来了一些挑战，因为在等待操作返回时，该缓冲区保持不变这一点非常重要。
+
+> 我对此进行了研究，我的经验是：相比其他方式，
+> 让“基于就绪状态”的模型表现得像“基于完成状态”的模型更容易。
+> 这意味着您应该首先让 IOCP 工作，然后将 `epoll` 或 `kqueue` 加入该设计中。
