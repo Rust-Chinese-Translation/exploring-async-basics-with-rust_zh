@@ -1,74 +1,104 @@
-# What is Node?
+# 什么是 Node
 
-We have to start with a short explanation of what Node is, just so we're on the same page.
+我们必须先简要说明 Node 是什么。
 
-Node is a Javascript runtime allowing Javascript to run on your desktop (or server). Javascript was originally designed as a scripting language for the browser, which means that it relies on the browser to both interpret it and provide a runtime for it.
+Node 是一个 JS 运行时，它让 JS 在你的桌面（或服务器）上运行。
+JS 最初被设计为浏览器的脚本语言，这意味着它依赖于浏览器来解释它并为其提供运行时。
 
-This also means that Javascript on the desktop needs to be both interpreted (or compiled) and provided with a runtime to be able to do anything meaningful. On the desktop, the [V8 javascript engine](https://en.wikipedia.org/wiki/V8_JavaScript_engine) compiles Javascript, and [Node](https://en.wikipedia.org/wiki/Node.js) provides the runtime.
+这也意味着桌面上的 JS 需要被解释（或编译）并提供运行时才能做任何有意义的事情。
+在桌面上，[V8 JS 引擎] 编译 JS，而 [Node] 提供运行时。
 
-Javascript has one advantage from a language design perspective: Everything is designed to be handled asynchronously. And as you know by now, this is pretty crucial if we want to make the most out of our hardware, especially if you have a lot of I/O operations to take care of.
+从语言设计的角度来看，JS 有一个优势：一切都被设计为异步处理。
+正如你现在所知，如果我们想充分利用我们的硬件，这非常重要，
+尤其是当你需要处理大量 I/O 操作时。
 
-One such scenario is a Web server. Web servers handle a lot of I/O tasks whether it's reading from the file system or communicating via the network card.
+其中一个场景是 Web 服务器。
+无论是从文件系统读取数据还是通过网卡进行通信，Web 服务器都会处理大量 I/O 任务。
 
-## Why Node In Particular?
+[V8 JS 引擎]: https://en.wikipedia.org/wiki/V8_JS_engine
+[Node]: https://en.wikipedia.org/wiki/Node.js
 
-- Javascript is unavoidable when doing web development for the browser. Using Javascript on the server allows programmers to use the same language for both front-end and back-end development.
-- There is a potential for code reuse between the back-end and the front-end
-- The design of Node allows it to make very performant web servers
-- Working with Json and web APIs is very easy when you only deal with Javascript
+## 为什么是 Node 
 
-## Helpful Facts
+- 在为浏览器进行 Web 开发时，JS 是不可避免的。
+  在服务器上使用 JS 让程序员使用相同的语言进行前端和后端开发。 
+- 后端和前端之间存在代码重用 (reuse) 的可能。 
+- Node 的设计让它成为非常高性能的 web 服务器 。
+- 当你只处理 JS 时，使用 JSon 和 web APIs 非常容易。
 
-Let's start off by debunking some myths that might make it easier to follow along when we start to code.
+## 有用的事实
 
-### The Javascript Event Loop
+首先揭开一些神奇的事，好让使我们在开始编码时更容易理解。
 
-Javascript is a scripting language and can't do much on its own. It doesn't have an event loop. Now in a web browser, the browser provides a runtime, which includes an event loop. And on the server, Node provides this functionality.
+### JS 事件循环
 
-You might say that Javascript as a language would be difficult to run (due to its callback-based model) without some sort of event loop, but that's beside the point.
+JS 是一种脚本语言，它自己不能做很多事情。它没有事件循环。
+现在在 Web 浏览器中，浏览器提供了一个运行时，其中包括一个事件循环。
+而在服务器上，Node 提供了这个功能。
 
-### Node is Multithreaded
+你可能会说，如果没有某种事件循环，JS 作为一种语言将难以运行
+（由于它基于回调的模型），但这不是重点。
 
-Contrary to what I've seen claimed on several occasions, Node uses a thread pool so it's multithreaded. However, the part of Node that "progresses" your code, does indeed run on a single thread. When we say "don't block the event loop" we're referring to this thread since that will prevent Node from making progress on other tasks.
+### Node 是多线程的
 
-We'll see exactly why blocking this thread is a problem and how that's handled.
+与我多次看到的说法相反，Node 使用线程池，因此它是多线程的。
+但是，“运行”你的代码的 Node 部分确实在单个线程上运行。
+当我们说“不要阻塞事件循环”时，我们指的是这个线程，因为它会阻止 Node 在其他任务上取得进展。
 
-### The V8 Javascript Engine
+我们会确切地看到为什么阻塞这个线程是一个问题，以及如何处理它。
 
-Now, this is where we need to focus a bit. The V8 engine is a javascript JIT compiler. That means that when you write a `for` loop, the V8 engine translates this to instructions that run on your CPU. There are many javascript engines, but Node was originally implemented on top of the V8 engine.
+### V8 JS 引擎
 
-The V8 engine itself isn't very useful for us; it just interprets our Javascript. It can't do I/O, set up a runtime or anything like that. Writing Javascript only with V8 will be a very limited experience.
+这才是我们需要关注的地方。 V8 引擎是一个 JS JIT 编译器。
+这意味着当你编写 `for` 循环时，V8 引擎会将其转换为在 CPU 上运行的指令。
+存在很多 JS 引擎，但 Node 最初是在 V8 引擎之上实现的。
 
-> Since we write Rust (even though we made it look a bit "javascripty"), we'll not cover the part of interpreting javascript. We'll just focus on how Node works and how it handles concurrency since that's our main focus right now.
+V8 引擎本身对我们来说不是很有用；它只是解释我们的 JS。
+它不能做 I/O 方面的事情，也不能准备运行时或类似的东西。
+仅使用 V8 编写 JS 将是一种非常有限的体验。
 
-### Nodes Event Loop(s)
+> 由于我们编写了 Rust（即使我们让它看起来有点像 JS），本书不会涵盖解释 JS 的部分。
+> 我们现在的主要关注点是：Node 如何工作以及它如何处理并发。 
 
-Node internally divides its real work into two categories:
+### Node 事件循环
 
-#### I/O-bound tasks
+Node 内部将其实际的工作分为两类：
 
-Tasks that mainly wait for some external event to occur are handled by the cross platform epoll/kqueue/IOCP event queue implemented in `libuv` and in our case `minimio`.
+#### 受 I/O 限制的任务
 
-#### CPU-bound tasks
+`libuv` 实现的跨平台 epoll/kqueue/IOCP 事件队列 处理等待外部事件发生的任务，
+在我们的例子中是 `minimio`。
 
-Tasks that are predominately CPU intensive are handled by a thread pool. The default size of this thread pool is 4 threads, but that can be configured by the Node runtime.
+#### 受 CPU 限制的任务
 
-I/O tasks which can't be handled by the cross platform event queue are also handled here, which is the case with file reads that we use in our example.
+CPU 密集型为主的任务由线程池处理。此线程池的默认大小为 4 个线程，但可以由 Node 运行时配置。
 
-Most C++ extensions for Node use this thread pool to perform their work, and that is one of many reasons they are used for calculation-intensive tasks.
+跨平台事件队列无法处理的 I/O 任务也在这里被处理，我们在示例中使用的文件读取就是这种情况。
 
-## Further Information
+Node 的大多数 c++ 扩展都使用这个线程池来执行它们的工作，
+这也是它们用于计算密集型任务的众多原因之一。
 
-If you do want to know more about the Node event loop, I have one short page of the `libuv` documentation I can
-refer you to and two talks for you that I find great (and correct) on this subject:
+## 更多信息
 
-[Libuv Design Overview](http://docs.libuv.org/en/v1.x/design.html#design-overview)
+如果你确实想了解有 Node 事件循环的更多信息，你可以参考以下这个简短的 `libv` 文档页面，
+而且提供给你两个我认为在这个主题上很棒（且正确）的演讲：
 
-This first talk one is held by [@piscisaureus](https://github.com/piscisaureus) and is an excellent 15 minute overview. I especially recommend this one as its short and to the point.
-<iframe width="560" height="315" src="https://www.youtube.com/embed/PNa9OMajw9w" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+1. [Libuv 设计一览](http://docs.libuv.org/en/v1.x/design.html#design-overview)
 
+2. 由 [@piscisaureus](https://github.com/piscisaureus) 主讲的演说，是一个 15 分钟的精彩概述。
+   我特别推荐这个，因为它简短扼要：
+   [Morning Keynote- Everything You Need to Know About Node.js Event Loop - Bert Belder, IBM]
+3. 第二个稍长（30 分钟），由 [bryan hughes](https://github.com/nebrius) 主讲，也很棒：
+   [The Node.js Event Loop: Not So Single Threaded]
 
-The second one is slightly longer but is also an excellent talk held by [Bryan Hughes](https://github.com/nebrius)
-<iframe width="560" height="315" src="https://www.youtube.com/embed/zphcsoSJMvM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[Morning Keynote- Everything You Need to Know About Node.js Event Loop - Bert Belder, IBM]:
+https://www.youtube.com/watch?v=PNa9OMajw9w&t=309s
 
-Now, relax, get a cup of tea and sit back while we go through everything together.
+<!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/PNa9OMajw9w" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+
+[The Node.js Event Loop: Not So Single Threaded]:
+https://www.youtube.com/watch?v=zphcsoSJMvM
+
+<!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/zphcsoSJMvM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+
+现在，放松，喝杯茶，坐下来，我们一起完成所有事情。

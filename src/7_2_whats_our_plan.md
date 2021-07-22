@@ -1,50 +1,52 @@
-# What's our plan?
+# 接下来的计划
 
-I'll briefly list what we need to do to get this working here:
+我将在这里简要列出我们需要做的事情：
 
-## We need two event queues:
+## 需要两个事件队列
 
-1. We need a thread pool to execute our CPU intensive tasks or tasks that we want
-to run asynchronously but not in our OS backed event queue
-2. We need to make a simple cross platform `epoll/kqueue/IOCP` event loop. Now
-this turns out to be extremely interesting, but it's also a lot of code, so I split
- this section off into a separate "companion book" for those that want to explore this further.
-We use this library here called `minimio`.
+1. 我们需要一个线程池来执行 CPU 密集型任务或我们想要异步运行但不在 OS 支持的事件队列中的任务 
+2. 我们需要编写一个简单的跨平台 `epoll/kqueue/IOCP` 事件循环。
+   事实证明这非常有趣，但它也有很多代码，所以我把这部分分成一个单独的“配套书”[^explained]，
+   供那些想要进一步探索的人使用。在这里我们使用名为 `minimio` 的库。
 
-> Granted, we're breaking our rule that we don't use any dependencies, but it's our own dependency which we'll explain fully in due time.
+> 当然，我们违反了不使用任何依赖项的规则，但这是我们自己的依赖项，
+> 我将在适当的时候对这些进行全面解释。
 
-## We need a runtime
+## 需要一个运行时
 
-**Our runtime will:**
+**我们编写的运行时会：**
 
-1. Store our callbacks to be run at a later point
-2. Send tasks to be executed on the thread pool
-3. Register interests with the OS (through `minimio`)
-4. Poll our two event sources for new events
-5. Handle timers
-6. Provide a way for "modules" like `Fs` and `Crypto` to register tasks
-7. Progress all our tasks until we're finished
+1. 存储稍后运行的回调 
+2. 发送要在线程池上执行的任务 
+3. 向操作系统注册感兴趣的事件（通过 `minimio`） 
+4. 轮询我们的两个事件源以获取新事件 
+5. 处理计时器 (timer)
+6. 为诸如 `Fs` 和 `Crypto` 之类的“模块”提供一种注册任务的方法 
+7. 推进所有的任务直到完成它们
 
-## We need a few modules
+## 需要一些模块
 
-1. For handling file system tasks `Fs`
-2. For handling http calls `Http`
-3. For handling cryptological tasks `Crypto`
+1. 用于处理文件系统任务 `Fs` 
+2. 用于处理 http 调用 `HTTP` 
+3. 用于处理加密任务 `Crypto`
 
-## We need to make some helpers
+## 需要一些辅助函数
 
-We need some helpers to make our code readable and to provide the output we want
-to see. In contrast to any real runtime, we're interested in knowing what happens
-and when. To help with that we define three extra methods:
+我们需要一些助手来使我们的代码可读并提供我们想要看到的输出。
+与任何真实的运行时相比，我们有兴趣知道发生了什么以及何时发生。
+为了帮助解决这个问题，我们定义了三个额外的方法：
 
-`print` which prints out a message that first tells us what thread the message is being outputted from and then a message we provide.
-
-`print_content` does the same as `print` but is a way for us to print out more than a message in a nice way.
-
-`current` is just a shortcut for us to get the name of the current thread. Since we want to track what's happening, we're going to need to print out which thread is issuing what output, so this will avoid cluttering up our code too much along the way.
+1. `print`：打印出一条消息，首先告诉我们消息是从哪个线程输出的，然后是我们提供的消息。 
+2. `print_content`：与 `print` 的作用相同，但它让我们以一种不错的方式打印出更多消息。
+3. `current`：获取当前线程名称的快捷方式。
+   因为我们想要跟踪正在发生的事情，所以我们需要打印出哪个线程正在发出什么输出，
+   这样可以避免在此过程中过多地混淆我们的代码。
 
 ## Minimio
 
-Minimio is a cross platform epoll/kqueue/IOCP based event loop that we will cover in the next book. I originally included it here, but implementing that for three architectures turned out to be a bit more involved than I first thought and needed more space than would fit in this book.
+minimio 是一个基于 epoll/kqueue/IOCP 的跨平台事件循环，我们将在下一本书中介绍。
+本书最初包含这部分，但结果证明为三种架构实现它比我最初想象的要复杂一些，并且需要比本书更多的空间。
 
-It's also easier to just read up on epoll/kqueue/IOCP when it's concentrated in a separate book.
+当 epoll/kqueue/IOCP 的知识集中于另一本书[^explained]中时，它也更容易阅读。
+
+[^explained]:译者注：指 [Epoll, Kqueue and IOCP explained](https://cfsamsonbooks.gitbook.io/epoll-kqueue-IOCP-explained)
