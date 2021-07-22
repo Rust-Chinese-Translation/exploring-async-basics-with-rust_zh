@@ -1,21 +1,20 @@
-# Introducing our main example
+# 介绍主要例子
 
-Now we've finally come to the part of this book where we will write some code.
+javascript => Javascript
 
-The Node event loop is a complex piece of software developed over many years. We
-will have to simplify things a lot.
+现在我们终于来到了本书编写一些代码的部分。
 
-We'll try to implement the parts that are important for us to understand Node a
-little better and most importantly use it as an example where we can use our
-knowledge from the previous chapters to make something that actually works.
+Node 事件循环 (event loop) 是一个经过多年开发的复杂软件。本书将不得不简化很多事情。
 
-Our main goal here is to explore async concepts.  Using Node as an example is
-mostly for fun.
+本书将尝试实现对我们更好地理解 Node 的重要部分。
+最重要的是将它用作示例，我们可以在这当中使用从前几章中获得的知识来做出实际工作的东西。
 
-**We want to write something like this:**
+我们的主要目标是探索异步概念。以 Node 为例主要是为了好玩。
+
+**我们想写这样的东西：**
 
 ```rust, no_run
-/// Think of this function as the javascript program you have written
+/// 把这个函数想象成你编写的 javascript 程序
 fn javascript() {
     print("First call to read test.txt");
     Fs::read("test.txt", |result| {
@@ -39,14 +38,14 @@ fn javascript() {
         print("Immediate2 timed out");
     });
 
-    // let's read the file again and display the text
+    // 再次读取文件并显示文本
     print("Second call to read test.txt");
     Fs::read("test.txt", |result| {
         let text = result.into_string().unwrap();
         let len = text.len();
         print(format!("Second count: {} characters.", len));
 
-        // aaand one more time but not in parallel.
+        // 再一次读文件，但不是并行的。
         print("Third call to read test.txt");
         Fs::read("test.txt", |result| {
             let text = result.into_string().unwrap();
@@ -67,7 +66,7 @@ fn javascript() {
         print("SETTIMEOUT");
     });
 
-    // `http_get_slow` lets us define a latency we want to simulate
+    // `http_get_slow` 让我们定义一个想要模拟的延迟
     print("Registering http get request to google.com");
     Http::http_get_slow("http//www.google.com", 2000, |result| {
         let result = result.into_string().unwrap();
@@ -81,19 +80,16 @@ fn main() {
 }
 ```
 
-> We'll have print statements at strategic places in our code so we can get a view of what's actually happening when and where.
+> 我们将在代码中的重要位置打印语句，以便我们可以了解实际代码发生的时间和地点。
 
-Right off the bat you'll see that something is strange with the Rust code we
-have written in our example.
+马上你就会发现我们在示例中编写的 Rust 代码有些奇怪。
 
-The code uses callbacks when we have an async operation we want to execute just
-like Javascript does, and we have "magic" modules like `Fs` or `Crypto` that
-we can call, just like when you import modules from Node.
+当我们想要像 Javascript 一样执行异步操作时，代码会使用回调，
+并且我们可以调用“神奇的”模块，例如 `Fs` 或 `Crypto`，就像从 Node 导入模块一样。
 
-Our code here is mostly calling functions that register an event and stores a
-callback to be run when the event is ready.
+我们这里的代码主要是调用用于注册事件和存储回调的函数，以便在事件准备好时运行。
 
-**An example of this is the `set_timeout` function:**
+**一个例子是 `set timeout` 函数：**
 
 ```rust, no_run
 set_timeout(0, |_res| {
@@ -101,22 +97,24 @@ set_timeout(0, |_res| {
 });
 ```
 
-What we really do here is register interest in a `timeout` event, and when that event occurs we want to run
-the callback `|_res| { print("Immediate1 timed out"); }`.
+在这里实际上注册了感兴趣的 `timeout` 事件，当该事件发生时，
+我们希望运行回调函数 `|_res| { print("Immediate1 timed out");  }`。
 
-Now the parameter `_res` is
-an argument that is passed into our callback. In javascript it would be left out, but since we use a typed language we have created a type called `Js`.
+`_res` 是一个传递给回调的参数。在 javascript 中，它会被省略，
+但由于我们使用了类型化语言，因此我们创建了一个名为 `Js` 的类型。
 
-`Js` is an enum that represents Javascript types. In the case of `set_timeout` it's `Js::undefined`. In the case of `Fs::read` it's an `Js::String` and so on.
+`Js` 是一个代表 Javascript 类型的枚举体。
+在 `set_timeout` 的情况下，它是 `Js::undefined` 。
+在 `Fs::read` 的情况下，它是 `Js::string` 等。
 
-When we run this code we'll get something looking like this:
+运行这段代码后，我们会得到如下所示的内容：
 
 <video autoplay loop>
 <source src="./images/example_run.mp4" type="video/mp4">
 Can't display video.
 </video>
 
-And here is what our output will look like:
+输出结果：
 
 ```
 Thread: main     First call to read test.txt
@@ -183,5 +181,4 @@ Thread: epoll    received event of type: Close
 Thread: main     FINISHED
 ```
 
-Don't worry, we'll explain everything, but I just wanted to start off by
-explaining where we want to end up.
+别担心，本书会解释一切，但我只是想从解释我们结束的地方开始。
