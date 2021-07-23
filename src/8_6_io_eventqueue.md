@@ -4,7 +4,7 @@ The I/O event queue is what handles most of our I/O tasks. Now we'll go through
 how we register events to that queue later on, but once an event is ready we
 it sends the `event_id` through our channel.
 
-```rust, no_run
+```rust, ignored
 fn process_epoll_events(&mut self, event_id: usize) {
     self.callbacks_to_run.push((event_id, Js::Undefined));
     self.epoll_pending_events -= 1;

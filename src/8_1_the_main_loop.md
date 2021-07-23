@@ -7,7 +7,7 @@ The `run` function on our `Runtime` will consume `self` so it's the last thing t
 
 I'll include the whole method last so you can see it all together.
 
-```rust, no_run
+```rust, ignored
 impl Runtime {
     pub fn run(mut self, f: impl Fn()) {
         ...
@@ -17,7 +17,7 @@ impl Runtime {
 
 ## Initialization
 
-```rust, no_run
+```rust, ignored
 let rt_ptr: *mut Runtime = &mut self;
 unsafe { RUNTIME = rt_ptr };
 let mut ticks = 0; // just for us printing out
@@ -41,7 +41,7 @@ The last and least visible part of this code is actually where we kick everythin
 
 ## Starting the event loop
 
-```rust, no_run
+```rust, ignored
 // ===== EVENT LOOP =====
 while self.pending_events > 0 {
     ticks += 1;
@@ -90,7 +90,7 @@ I refer to the `epoll/kqueue/IOCP` event queue as `epoll` here just so you know 
 
 The first thing we do is to check if we have any timers. If we have timers that will time out we calculate how many milliseconds it is to the first timer to timeout. We'll need this to make sure we don't block and forget about our timers.
 
-```rust, no_run
+```rust, ignored
 let next_timeout = self.get_next_timer();
 
 let mut epoll_timeout_lock = self.epoll_timeout.lock().unwrap();
@@ -104,7 +104,7 @@ If we're still holding the lock we'll end up in a `deadlock`. `drop(epoll_timeou
 
 ### Wait for events
 
-```rust, no_run
+```rust, ignored
 if let Ok(event) = self.event_reciever.recv() {
     match event {
         PollEvent::Timeout => (),
@@ -177,7 +177,7 @@ Next we call `close_loop()` on our `epoll_registrator` to signal the OS event qu
 
 ## The final `run` function
 
-```rust, no_run
+```rust, ignored
 pub fn run(mut self, f: impl Fn()) {
     let rt_ptr: *mut Runtime = &mut self;
     unsafe { RUNTIME = rt_ptr };

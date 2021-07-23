@@ -3,7 +3,7 @@
 The `Fs` module contains File operations. Right now we only expose a `read` method
 since that's all we need. As you can imagine we can add all sorts of methods here.
 
-```rust, no_run
+```rust, ignored
 struct Fs;
 impl Fs {
     fn read(path: &'static str, cb: impl Fn(Js) + 'static) {

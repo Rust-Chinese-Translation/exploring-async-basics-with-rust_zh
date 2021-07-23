@@ -3,7 +3,7 @@
 ## 2. Process callbacks
 The next step is to handle any callbacks we've scheduled to run.
 
-```rust, no_run
+```rust, ignored
 fn run_callbacks(&mut self) {
     while let Some((callback_id, data)) = self.callbacks_to_run.pop() {
         let cb = self.callback_queue.remove(&callback_id).unwrap();
@@ -30,7 +30,7 @@ So when we've got a `callback_id` we find the corresponding callback we have sto
 
 Let's recap by looking at what members of the `Runtime` struct we used here:
 
-```rust, no_run
+```rust, ignored
 pub struct Runtime {
     callback_queue: HashMap<usize, Box<dyn FnOnce(Js)>>,
 }

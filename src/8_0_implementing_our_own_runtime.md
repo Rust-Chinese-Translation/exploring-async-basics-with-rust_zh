@@ -1,84 +1,82 @@
-# Implementing our own runtime
+# 实现自己的运行时
 
-Let's start to get some code written down; we have a lot to do.
+让我们开始写一些代码；我们有很多事情要做。
 
-The way we'll go about this is that I'll go through everything the way I find it easiest to parse and understand. That also means that sometimes I have to introduce a bit of code that will be explained later.  Try not to worry if you don't understand something at first.  I'll be going through everything.
+我将按照我认为最容易解析和理解的方式来处理开展所有工作。
+这也意味着有时我必须引入一些稍后将解释的代码。
+如果您一开始不了解某些内容，请不要担心。我会解释一切。
 
-The very first thing we need to do is to create a Rust project to run our code in:
+我们需要做的第一件事是创建一个 Rust 项目来运行我们的代码：
 
-```
+```shell
 cargo new async-basics
 cd async-basics
 ```
 
-Now, as I've explained, we'll need to use the `minimio` library (which will be explained in a separate book, but you can already look through the source code if you want to):
+我们需要使用 `minimio` 库
 
-In `Cargo.toml`
+在 `Cargo.toml` 中添加：
 
 ```toml
 [dependencies]
 minimio = {git = "https://github.com/cfsamson/examples-minimio", branch = "master"}
 ```
 
-A second option is to clone the repository containing all the code we're going
-to write and go through that as we go along:
+然后 clone 包含我们将要编写的所有代码的 repo ：
 
 ```
 git clone https://github.com/cfsamson/examples-node-eventloop
 ```
 
-The next thing we need is a `Runtime` to hold all the state our `Runtime` needs.
+接下来我们需要一个 `Runtime` 来保存我们的 `Runtime` 需要的所有状态。
 
-First navigate to `main.rs` (located in `src/main.rs`).
+首先导航到 `main.rs`（位于 `src/main.rs` ）。
 
-> We'll write everything in one file this time in roughly the same order as we
-> go through them in this book.
+> 这次我们将把所有内容都写到一个文件中，其顺序与我们在本书中的顺序大致相同。
 
-## Runtime struct
+# 定义的结构体
+## `Runtime`
 
-I've added comments to the code so it's easier to remember and understand.
+我在代码中添加了注释，以便更容易记住和理解。
 
-```rust, no_run
+```rust, ignored
 pub struct Runtime {
-    /// Available threads for the threadpool
+    /// 线程池的可用线程
     available_threads: Vec<usize>,
-    /// Callbacks scheduled to run
+    /// 计划运行的回调
     callbacks_to_run: Vec<(usize, Js)>,
-    /// All registered callbacks
+    /// 所有注册的 (registered) 回调
     callback_queue: HashMap<usize, Box<dyn FnOnce(Js)>>,
-    /// Number of pending epoll events, only used by us to print for this example
+    /// 待处理的 epoll 事件的数量，仅用于在此示例中打印
     epoll_pending_events: usize,
-    /// Our event registrator which registers interest in events with the OS
+    /// 事件注册器，它向操作系统注册对感兴趣的事件
     epoll_registrator: minimio::Registrator,
-    // The handle to our epoll thread
+    // epoll 线程的句柄
     epoll_thread: thread::JoinHandle<()>,
-    /// None = infinite, Some(n) = timeout in n ms, Some(0) = immediate
+    /// None = 无限延时, Some(n) = 延时 n ms , Some(0) = 立即执行
     epoll_timeout: Arc<Mutex<Option<i32>>>,
-    /// Channel used by both our threadpool and our epoll thread to send events
-    /// to the main loop
+    /// 线程池和 epoll 线程使用的通道 (channel) ，用来将事件发送到主循环
     event_reciever: Receiver<PollEvent>,
-    /// Creates an unique identity for our callbacks
+    /// 给回调创建一个唯一的标识
     identity_token: usize,
-    /// The number of events pending. When this is zero, we're done
+    /// 待处理事件的数量。当它为零时，我们就完成了所有任务。
     pending_events: usize,
-    /// Handles to our threads in the threadpool
+    /// 线程池中的线程句柄
     thread_pool: Vec<NodeThread>,
-    /// Holds all our timers, and an Id for the callback to run once they expire
+    /// 保存所有的计时器，和一旦计时器过期就运行回调的 Id
     timers: BTreeMap<Instant, usize>,
-    /// A struct to temporarely hold timers to remove. We let Runtinme have
-    /// ownership so we can reuse the same memory
+    /// 临时保存待移除的定时器的结构体。我们让运行时拥有所有权，以便可以再次使用相同的内存
     timers_to_remove: Vec<Instant>,
 }
 ```
 
-Now, I've added some comments here to explain what they're for and in the coming
-chapters we'll cover every one of them.
+现在，我在这里添加了一些注释来解释它们的用途，在接下来的章节中，本书将说明上面每一处地方。
 
-I'll continue by defining some of the types we use here.
+我们将继续定义上面使用的一些类型。
 
-## Task
+## `Task`
 
-```rust, no_run
+```rust, ignored
 struct Task {
     task: Box<dyn Fn() -> Js + Send + 'static>,
     callback_id: usize,
@@ -96,23 +94,23 @@ impl Task {
 }
 ```
 
-We need a task object, which represents a task we want to finish in our thread
-pool. I'll go through the types in this object in a later [chapter](./8_9_infrastructure.md) so don't worry too much about them now if you find them
-hard to grasp. Everything will be explained.
+我们需要一个任务对象，它代表我们想要在线程池中完成的任务。
+我将在稍后的 [章节](./8_9_infrastructure.md) 中详细介绍这个对象的类型，所以如果你现在觉得难以理解，不要太担心。
+一切都会得到解释。
 
-We also create an implementation of a `Close` task. We need this to clean up after ourselves and close down the thread pool.
+我们还创建了 `Close` 方法，它用来任务完成之后清理自己并关闭线程池。
 
-`|| Js::Undefined` might seem strange but it's only a function that returns `Js::Undefined`, we need it since we won't make `task` an `Option` just for this one case.
+`|| Js::Undefined` 可能看起来很奇怪，但它只是一个返回 `Js::Undefined` 的函数，
+写成这样是因为我们不会仅针对这种情况而将 `task` 设为 `Optiona` 类型。
 
-It's just so we don't have to `match` or `map` on `task` all the way through our code, it's more than enough to parse already.
+这只是让我们不必在代码中一直对 `task` 进行 `match` 或 `map` ，解析已经绰绰有余了。
 
-## NodeThread
+## `NodeThread`
 
-First is `NodeThread`, which represents a thread in our thread pool. As you
-see we have a `JoinHandle` (which we get when we call `thread::spawn`) and the
-sending part of a channel. This channel, sends messages of the type `Task`.
+`NodeThread` 代表线程池中的一个线程；它有一个 `JoinHandle`（调用 `thread::spawn` 时得到它）
+和一个 channel 的 `Sender` 。此 channel 发送类型为 `Task` 的消息。
 
-```rust, no_run
+```rust, ignored
 #[derive(Debug)]
 struct NodeThread {
     pub(crate) handle: JoinHandle<()>,
@@ -120,15 +118,21 @@ struct NodeThread {
 }
 ```
 
-We introduced two new types here: `Js` and `ThreadPoolTaskKind`. First we'll cover `ThreadPoolTaskKind`.
+这里引入了两种新类型：`Js` 和 `ThreadPoolTaskKind` 。
+首先，我们将介绍 `ThreadPoolTaskKind` (线程池任务种类) 。
 
-In our example, we have three kinds of events: a `FileRead` which is a file that has been read, and an `Encrypt` that represents an operation from our `Crypto` module. The event `Close` is used to let the threads in our `threadpool` that we're closing the loop and let them finish before we exit our process.
+在示例中，有三种事件：
 
-## ThreadPoolTaskKind
+1. `FileRead`：已读取文件
+2. `Encrypt`：表示来自 `Crypto` 模块的操作
+3. `Close`：让 `threadpool` 中的线程关闭循环，并让线程在退出进程之前结束。
 
-As you might understand, this object is only used in the `threadpool`.
+# 定义的枚举体
+## `ThreadPoolTaskKind`
 
-```rust,no_run
+正如你可能理解的，这个对象只在 `threadpool` 中使用：
+
+```rust, ignored
 pub enum ThreadPoolTaskKind {
     FileRead,
     Encrypt,
@@ -136,20 +140,17 @@ pub enum ThreadPoolTaskKind {
 }
 ```
 
-## Js
+## `Js`
 
-Next is our `Js` object. This represents different `Javascript` types, and it's only used
-to make our code look more "javascripty", but it's also convenient for us to
-abstract over the return types of closures.
+接下来是`Js` 对象。它代表了不同的` Javascript` 类型，
+它只是用来让我们的代码看起来更像 Javascript，也方便我们抽象闭包的返回类型。
 
-We'll also implement two convenience methods on this object to make our "javascripty"
-code look a bit cleaner.
+我们还将在这个对象上实现两个方便的方法，使我们的 Javascripty 代码看起来更简洁一些。
 
-We know the return types already based on our modules
-documentation - just like you would know it from the documentation when using a
-Node module but we need to actually handle the types in Rust so this will make that just slightly easier for us.
+我们已经根据我们的模块文档知道返回类型 —— 就像你在使用 Node 模块时从文档中知道它一样，
+但我们实际上需要处理 Rust 中的类型。
 
-```rust,no_run
+```rust, ignored
 #[derive(Debug)]
 pub enum Js {
     Undefined,
@@ -158,7 +159,7 @@ pub enum Js {
 }
 
 impl Js {
-    /// Convenience method since we know the types
+    /// 这是一个方便的方法，因为我们知道类型
     fn into_string(self) -> Option<String> {
         match self {
             Js::String(s) => Some(s),
@@ -166,7 +167,7 @@ impl Js {
         }
     }
 
-    /// Convenience method since we know the types
+    /// 这是一个方便的方法，因为我们知道类型
     fn into_int(self) -> Option<usize> {
         match self {
             Js::Int(n) => Some(n),
@@ -176,47 +177,43 @@ impl Js {
 }
 ```
 
-## PollEvent
+## `PollEvent`
 
-Next we have the `PollEvent`. While we defined an `enum` to represent what
-kind of events we could send **to** the `eventpool`, we define some events
-that we can accept back from both our `epoll based` event queue and our `threadpool`.
+接下来我们定义 `PollEvent` (轮询事件) 。
+虽然我们定义了 `ThreadPoolTaskKind` 来表示我们可以**发送**给 `eventpool` 的事件类型，
+但我们现在要定义一些接收事件，它们来自于 epoll 的事件队列和 `threadpool` 。
 
-```rust,no_run
-/// Describes the three main events our epoll-eventloop handles
+```rust, ignored
+/// 描述了 epoll-eventloop 处理的三个主要事件
 enum PollEvent {
-    /// An event from the `threadpool` with a tuple containing the `thread id`,
-    /// the `callback_id` and the data which the we expect to process in our
-    /// callback
+    /// 来自 `threadpool` 的事件，其元组包含 `thread_id` `callback_id`
+    /// 和我们期望在回调中处理的数据
     Threadpool((usize, usize, Js)),
-    /// An event from the epoll-based eventloop holding the `event_id` for the
-    /// event
+    /// 来自基于 epoll 的 eventloop 的事件，其中包含事件的 `event_id`
     Epoll(usize),
     Timeout,
 }
 ```
 
-## const RUNTIME
+# static `RUNTIME`
 
-Lastly we have another convenience for us, and it's also necessary to make our
-Javascript code look a bit like Javascript.
+最后定义一个方便而必要的静态变量，让我们的 Javascript 代码看起来有点像 Javascript 。
 
-First we have a static variable which represents our `Runtime`. It's actually
-a pointer to our `runtime` which we initialize to a null-pointer from the start.
+它代表“运行时”；实际上是一个指向我们的 `Runtime` 的指针，我们一开始将它初始化为一个空指针。
 
-We need to use unsafe to edit this. I'll explain later how this is safe, but I
-also want to mention here that it could be avoided by using [lazy_static](https://github.com/rust-lang-nursery/lazy-static.rs)
-but that would both require us to add `lazy_static` as an dependency (which would
-be fine since it contains no "magic" that we want to explain in this book) but
-it also does make our code less readable, and it's complex enough.
+我们需要使用 unsafe 来修改它。
+我稍后会解释这是如何安全的，但我也想在这里提一下，
+这可以使用 [lazy_static](https://github.com/rust-lang-nursery/lazy-static.rs) 来避免 unsafe 。
+但是这不仅需要我们添加 `lazy_static` 作为依赖（这是好事，因为它没有我们想在本书中解释的“魔法”），
+而且降低了代码可读性 —— 我们的代码足够复杂了。
 
-
-```rust, no_run
+```rust, ignored
 static mut RUNTIME: *mut Runtime = std::ptr::null_mut();
 ```
 
-Let's now move on and look at what the heart of the runtime looks like: the main loop
+现在让我们继续看看运行时的核心是什么：主循环 (main loop) 。
 
-## Moving on
+# 继续
 
-Now we've already gotten really far by introducing most of our runtime already in the first chapter. The next chapter will focus on implementing all the functionality we need for this to work.
+我们已经介绍了运行时大部分所需的东西，已经走得很远了。
+下一章将重点介绍实现我们需要的所有功能。

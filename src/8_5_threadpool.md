@@ -19,7 +19,7 @@ main event loop and only notify us once the data is ready for us in memory.
 
 The code we need to add to process events from the thread pool is short an simple:
 
-```rust, no_run
+```rust, ignored
 fn process_threadpool_events(&mut self, thread_id: usize, callback_id: usize, data: Js {
     self.callbacks_to_run.push((callback_id, data));
     self.available_threads.push(thread_id);

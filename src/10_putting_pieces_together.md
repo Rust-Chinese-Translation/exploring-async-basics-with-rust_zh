@@ -3,7 +3,7 @@
 The first step to get this to run is obvious. We need a main function. Fortunately
 it's a short one:
 
-```rust, no_run
+```rust, ignored
 fn main() {
     let rt = Runtime::new();
     rt.run(javascript);
@@ -17,7 +17,7 @@ about our `Runtime` while it's running.
 
 For those new to Rust I'll spend the time to explain them anyway:
 
-```rust, no_run
+```rust, ignored
 fn current() -> String {
     thread::current().name().unwrap().to_string()
 }
@@ -28,7 +28,7 @@ Since we have several threads handling tasks for us, this will help us keep trac
 of what goes on where.
 
 
-```rust, no_run
+```rust, ignored
 fn print(t: impl std::fmt::Display) {
     println!("Thread: {}\t {}", current(), t);
 }
@@ -41,7 +41,7 @@ get the name of the current thread and outputs it `stdout`.
 The next function us a bit of an introduction to iterators. When we have content
 to print we use this one:
 
-```rust, no_run
+```rust, ignored
 fn print_content(t: impl std::fmt::Display, descr: &str) {
     println!(
         "\n===== THREAD {} START CONTENT - {} =====",
@@ -76,7 +76,7 @@ fn print_content(t: impl std::fmt::Display, descr: &str) {
 Let's explain the iterators step by step:
 
 First we have:
-```rust, no_run
+```rust, ignored
 let content = format!("{}", t);
 let lines = content.lines().take(2);
 let main_cont: String = lines.map(|l| format!("{}\n", l)).collect();
@@ -97,7 +97,7 @@ that the lines will come out as a single line). Then we `collect` that into a `S
 
 We know they collect to a `String` since we annotated the type of `main_cont` in `let main_cont: String`.
 
-```rust, no_run
+```rust, ignored
 let opt_location = content.find("Location");
 let opt_location = opt_location.map(|loc| {
         content[loc..]

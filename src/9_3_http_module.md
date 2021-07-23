@@ -8,7 +8,7 @@ two reasons for this:
 
 Let's look at the code first and then step through it:
 
-```rust, no_run
+```rust, ignored
 struct Http;
 impl Http {
     pub fn http_get_slow(url: &str, delay_ms: u32, cb: impl Fn(Js) + 'static + Clone) {
@@ -56,7 +56,7 @@ In the function body, the first thing we do is dereference our runtime. We need 
 
 The next step is to create a `minimio::TcpStream`.
 
-```rust, no_run
+```rust, ignored
 let adr = "slowwly.robertomurray.co.uk:80";
 let mut stream = minimio::TcpStream::connect(adr).unwrap();
 ```
@@ -77,7 +77,7 @@ each request.
 
 Next we construct a http `GET` request. The line breaks, and spacing is important here
 as is the two blank lines at the bottom.
-```rust, no_run
+```rust, ignored
 let request = format!(
             "GET /delay/{}/url/http://{} HTTP/1.1\r\n\
              Host: slowwly.robertomurray.co.uk\r\n\
@@ -99,7 +99,7 @@ Next we write this request to our `TcpStream`. In a real implementation this wou
 have been done by issuing the write in an async manner and then register an event
 when the write has happened.
 
-```rust, no_run
+```rust, ignored
 stream
     .write_all(request.as_bytes())
     .expect("Error writing to stream");
@@ -116,7 +116,7 @@ First we need to generate a `token`. This token will follow our `event` and be p
 on to the OS. When the OS returns it also returns this token so we know what event
 occurred.
 
-```rust, no_run
+```rust, ignored
 let token = rt.generate_cb_identity();
 ```
 
@@ -126,7 +126,7 @@ events <-> callbacks will map 1:1 the way we have designed this.
 Our next call actually issues a syscall to the underlying OS and registers our
 interest in an event of type `Readable`.
 
-```rust, no_run
+```rust, ignored
 rt.epoll_registrator
             .register(&mut stream, token, minimio::Interests::readable())
             .unwrap();
@@ -147,7 +147,7 @@ The main point here is that we register an interest to read in a non-blocking ma
 I'll repeat this part of the code so you have it right in front of you while i
 explain:
 
-```rust, no_run
+```rust, ignored
     let wrapped = move |_n| {
             let mut stream = stream;
             let mut buffer = String::new();

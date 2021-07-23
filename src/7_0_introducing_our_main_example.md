@@ -11,7 +11,7 @@ Node 事件循环 (event loop) 是一个经过多年开发的复杂软件。本�
 
 **我们想写这样的东西：**
 
-```rust, no_run
+```rust, ignored
 /// 把这个函数想象成你编写的 Javascript 程序
 fn Javascript() {
     print("First call to read test.txt");
@@ -89,7 +89,7 @@ fn main() {
 
 **一个例子是 `set timeout` 函数：**
 
-```rust, no_run
+```rust, ignored
 set_timeout(0, |_res| {
     print("Immediate1 timed out");
 });

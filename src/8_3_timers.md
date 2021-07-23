@@ -68,7 +68,7 @@ Anyway, for now we add the callback id's to `self.callbacks_to_run`.
 Before we continue, let's recap by looking what members of the `Runtime` struct
 we used here:
 
-```rust, no_run
+```rust, ignored
 pub struct Runtime {
     pending_events: usize,
     callbacks_to_run: Vec<(usize, Js)>,

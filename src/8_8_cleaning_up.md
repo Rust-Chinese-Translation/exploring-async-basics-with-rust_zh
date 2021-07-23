@@ -3,7 +3,7 @@
 Lastly we clean up after ourselves by joining all our threads so we know that
 all destructors have ran without errors after we're finished.
 
-```rust, no_run
+```rust, ignored
 // We clean up our resources, make sure all destructors run.
 for thread in self.thread_pool.into_iter() {
     thread.sender.send(Event::close()).expect("threadpool cleanup");

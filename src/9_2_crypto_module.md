@@ -5,7 +5,7 @@ simulate a CPU intensive operation that would block if not run on the threadpool
 
 Without further ado: The Glorious Crypto Module
 
-```rust, no_run
+```rust, ignored
 struct Crypto;
 impl Crypto {
     fn encrypt(n: usize, cb: impl Fn(Js) + 'static + Clone) {

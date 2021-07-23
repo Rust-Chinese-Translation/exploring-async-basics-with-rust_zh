@@ -4,7 +4,7 @@ Now, for everything to work we need some helpers to make our infrastructure work
 
 First of all, we need a way to get the `id` of an available thread.
 
-```rust, no_run
+```rust, ignored
    fn get_available_thread(&mut self) -> usize {
         match self.available_threads.pop() {
             Some(thread_id) => thread_id,
