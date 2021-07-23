@@ -14,7 +14,7 @@
   - [什么是 Node](./7_1_what_is_node.md)
   - [接下来的计划](./7_2_whats_our_plan.md)
 - [实现自己的运行时](8_0_implementing_our_own_runtime.md)
-    - [main loop](./8_1_the_main_loop.md)
+    - [主循环](./8_1_the_main_loop.md)
     - [设置 runtime](./8_2_setting_up_runtime.md)
     - [Timers](./8_3_timers.md)
     - [Callbacks](./8_4_callbacks.md)

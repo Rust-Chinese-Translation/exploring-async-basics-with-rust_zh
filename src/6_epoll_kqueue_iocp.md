@@ -5,7 +5,7 @@
 Node 的运行时有一部分基于 [libuv](https://github.com/libuv/libuv) ，这是一个跨平台的异步 I/O 库。
 `libuv` 不仅在 Node 中使用，还构成了
 [Julia](https://julialang.org/) 和 [Pyuv](https://github.com/saghul/pyuv) 
-创建跨平台的基础事件队列；大多数语言都有绑定 `libuv` 。
+实现跨平台的基础事件队列；大多数语言都有绑定 `libuv` 。
 
 在 Rust 中，我们有 [mio: Metal IO](https://github.com/tokio-rs/mio)。
 `Mio` 为 [tokio](https://github.com/tokio-rs/tokio) 中使用的操作系统事件队列提供支持，
