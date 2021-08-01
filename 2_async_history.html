@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>异步的历史 - 用 Rust 探索 Async</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+                <link rel="stylesheet" href="theme/pagetoc.css">
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">简介</a></li><li class="chapter-item expanded "><a href="1_concurrent_vs_parallel.html"><strong aria-hidden="true">1.</strong> 并发 vs 并行</a></li><li class="chapter-item expanded "><a href="2_async_history.html" class="active"><strong aria-hidden="true">2.</strong> 异步的历史</a></li><li class="chapter-item expanded "><a href="3_0_the_operating_system.html"><strong aria-hidden="true">3.</strong> OS 与 CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="3_1_communicating_with_the_os.html"><strong aria-hidden="true">3.1.</strong> 与 OS 通信</a></li><li class="chapter-item expanded "><a href="3_2_cross_platform_abstractions.html"><strong aria-hidden="true">3.2.</strong> 跨平台抽象</a></li><li class="chapter-item expanded "><a href="3_3_the_cpu_and_the_os.html"><strong aria-hidden="true">3.3.</strong> CPU 与 OS</a></li></ol></li><li class="chapter-item expanded "><a href="4_interrupts_firmware_io.html"><strong aria-hidden="true">4.</strong> 中断 | 固件 | I/O</a></li><li class="chapter-item expanded "><a href="5_strategies_for_handling_io.html"><strong aria-hidden="true">5.</strong> 处理 I/O 的策略</a></li><li class="chapter-item expanded "><a href="6_epoll_kqueue_iocp.html"><strong aria-hidden="true">6.</strong> Epoll | Kqueue | IOCP</a></li><li class="chapter-item expanded "><a href="7_0_introducing_our_main_example.html"><strong aria-hidden="true">7.</strong> 例子简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="7_1_what_is_node.html"><strong aria-hidden="true">7.1.</strong> 什么是 Node</a></li><li class="chapter-item expanded "><a href="7_2_whats_our_plan.html"><strong aria-hidden="true">7.2.</strong> 接下来的计划</a></li></ol></li><li class="chapter-item expanded "><a href="8_0_implementing_our_own_runtime.html"><strong aria-hidden="true">8.</strong> 实现自己的运行时</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="8_1_the_main_loop.html"><strong aria-hidden="true">8.1.</strong> 主循环</a></li><li class="chapter-item expanded "><a href="8_2_setting_up_runtime.html"><strong aria-hidden="true">8.2.</strong> 设置 runtime</a></li><li class="chapter-item expanded "><a href="8_3_timers.html"><strong aria-hidden="true">8.3.</strong> Timers</a></li><li class="chapter-item expanded "><a href="8_4_callbacks.html"><strong aria-hidden="true">8.4.</strong> Callbacks</a></li><li class="chapter-item expanded "><a href="8_5_threadpool.html"><strong aria-hidden="true">8.5.</strong> Threadpool</a></li><li class="chapter-item expanded "><a href="8_6_io_eventqueue.html"><strong aria-hidden="true">8.6.</strong> I/O 事件队列</a></li><li class="chapter-item expanded "><a href="8_8_cleaning_up.html"><strong aria-hidden="true">8.7.</strong> 清理</a></li><li class="chapter-item expanded "><a href="8_9_infrastructure.html"><strong aria-hidden="true">8.8.</strong> 基础设施</a></li></ol></li><li class="chapter-item expanded "><a href="9_0_modules.html"><strong aria-hidden="true">9.</strong> 模块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="9_1_file_module.html"><strong aria-hidden="true">9.1.</strong> 文件模块</a></li><li class="chapter-item expanded "><a href="9_2_crypto_module.html"><strong aria-hidden="true">9.2.</strong> 加密模块</a></li><li class="chapter-item expanded "><a href="9_3_http_module.html"><strong aria-hidden="true">9.3.</strong> Http 模块</a></li></ol></li><li class="chapter-item expanded "><a href="10_putting_pieces_together.html"><strong aria-hidden="true">10.</strong> 把代码组织起来</a></li><li class="chapter-item expanded "><a href="11_final_code.html"><strong aria-hidden="true">11.</strong> 最终代码</a></li><li class="chapter-item expanded "><a href="12_shortcuts_and_improvements.html"><strong aria-hidden="true">12.</strong> 捷径与改进</a></li><li class="chapter-item expanded affix "><a href="conclusion.html">总结</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">用 Rust 探索 Async</h1>
+
+                    <div class="right-buttons">
+                                                                        <a href="https://github.com/zjp-CN/exploring-async-basics-with-rust_zh" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="异步的历史"><a class="header" href="#异步的历史">异步的历史</a></h1>
+<p>起初，计算机只有一个 CPU ，一个接一个地执行一组程序员编写的指令。
+没有调度，没有线程，也没有多任务。这就是计算机长期以来的工作方式。
+那时的程序看起来是这样的：</p>
+<p><img src="./images/punched_card_deck.jpg" alt="Image" /></p>
+<p>甚至在很早的时候，就有人研究操作系统；当 1980s 个人计算兴起的时候，
+类似 DOS 的操作系统成为大多数消费者 PCs 上的标配。</p>
+<p>这些操作系统通常把整个 CPU的控制权交给当前运行的程序，
+然后由程序员决定如何让它工作、如何针对编写的程序实现各种多任务。
+此时这样做是可以工作了，但是随着交互式 UIs 使用鼠标和窗口式操作系统成为常态，
+上述这种模式就不再能工作了。</p>
+<h2 id="非抢占式多任务处理"><a class="header" href="#非抢占式多任务处理">非抢占式多任务处理</a></h2>
+<p>第一种保持 UI 交互式（而且在后台进程运行）的方法叫做
+<strong>非抢占式多任务处理</strong> (non-preemptive multitasking) 。</p>
+<p>这种多任务方式负责让 OS 处理响应鼠标之类的任务，或者在后台运行任务的控制权处于程序员手上。</p>
+<p>一般来说，程序员将这种控制权让渡给 OS 。</p>
+<p>这种非抢占式的方式不仅把巨大的责任推给每个在这个 OS 上编写的程序员，而且这很容易出现问题。
+一个程序代码中的小错误就可能使整个系统停止或者崩溃。</p>
+<blockquote>
+<p>要是你还记得 Windows 95 的话，你肯定不会忘了当窗口无响应 (hang) 时，你可以借此窗口绘制整个屏幕，
+基本就像 Windows 自带的纸牌游戏结尾那样。</p>
+<p>据说，这是典型的错误代码，它本应该把控制权交给操作系统。</p>
+</blockquote>
+<h2 id="抢占式多任务处理"><a class="header" href="#抢占式多任务处理">抢占式多任务处理</a></h2>
+<p>虽然非抢占式听起来是个好主意，但它事实上也会产生严重的问题。
+让每个程序和程序员负责获取 OS 中的响应 UI 可能最后引发很差的用户体验，
+因为出现的每个 bug 都可能使整个系统停止。</p>
+<p>解决的办法就是 <strong>抢占式多任务处理</strong> (preemptive multitasking)：
+把调度 CPU 资源的责任交给 OS ，这些资源程序和 OS 自身都需要。
+OS 可以暂停一个执行中的线程，做些别的事，然后切回（继续）被暂停的线程。 </p>
+<p>在单核机器上，你可以想像一下，你写的程序运行着，OS 必须停下你的程序来更新鼠标位置，
+然后切回和继续执行你的程序。这会时常发生，以至于无法判断 CPU 究竟是忙于处理很多工作，还是空闲。</p>
+<p>此时 OS 负责调度任务，为此切换 CPU 上的上下文（即跳转任务）。 
+这个过程每秒会发生很多次，不仅让 UI 保持响应，而且可给其他后台任务和 IO 时间一些时间。</p>
+<p>这就是目前主流的设计操作系统的方式。</p>
+<blockquote>
+<p>如果你想了解更多这种线程式多任务处理，我建议你阅读之前提到的 
+<a href="https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/">绿色线程</a> 这本书。
+它介绍得不错，从而你可以对线程 (threads) 、上下文 (contexts) 、栈 (stacks) 、调度 (scheduling) 
+有基本的了解。</p>
+</blockquote>
+<h2 id="超线程"><a class="header" href="#超线程">超线程</a></h2>
+<p>随着 CPU 演进，它增加了更多功能，比如 算术逻辑单元 (ALUs, Arithmetic Logic Units) 和额外逻辑单元，
+CPU 的生产商意识到整个 CPU 并没有被完全利用。
+比如当一个操作只需要 CPU 的某些部分时，一条指令可以同时在 ALU 上运行。
+这就是最初的超线程 (hyperthreading) 。</p>
+<p>如今你的电脑比方说有 6 个核和 12 个逻辑核。正是超线程的用武之地。
+超线程在同一个核上 “模拟” 了两个内核，它在线程 1 上运行代码的同时，
+利用未使用的 CPU 部分来运行线程 2 上的进程。
+超线程通过很多聪明的技巧（比如 ALU）做到这一点。</p>
+<p>现在有了超线程，保持 UI 交互时，其实可以分担一部分工作到一个线程上：
+在第二个线程上响应事件，从而即使只有一个 CPU，也能更好地发挥硬件的作用。</p>
+<blockquote>
+<p>你可能好奇超线程的性能如何。</p>
+<p>事实证明，超线程自 1990s 以来就一直被改进。
+因为你其实没有在两个 CPU 上运行代码，有些操作需要等待另一个才能完成。
+与单核多线程相比，超线程的所带来的额外性能似乎<a href="https://en.wikipedia.org/wiki/Hyper-threading#Performance_claims">接近 30%</a> ，但这很大程度上取决于工作量。</p>
+</blockquote>
+<h2 id="多核处理器"><a class="header" href="#多核处理器">多核处理器</a></h2>
+<p>Multicore Processors</p>
+<p>众所周知，处理器的时钟频率在很长一段时间内一直是平稳的。
+通过改进缓存、分支预测、推测执行和在处理器的处理管道上工作，处理器的速度会更快，
+但是这带来的好处似乎正在减少。</p>
+<p>另一方面，新处理器很小，以至于同一块芯片上可以有很多处理器。
+现在，大多数 CPUs 有很多核，而且每个核通常都有超线程的能力。</p>
+<h2 id="你编写的代码有多同步呢"><a class="header" href="#你编写的代码有多同步呢">你编写的代码有多同步呢？</a></h2>
+<p>像很多事情一样，这取决于你站的角度。</p>
+<p>从你编写的程序及其使用的线程来看，你的代码会按照编写的顺序正常执行。</p>
+<p>从 OS 的角度看，OS 可能会也可能不会中断和暂停你的代码，同时运行一些其他的代码然后恢复你的线程。</p>
+<p>从 CPU 的角度看，CPU 很可能一次执行这些指令 (instructions) 。
+指令不关心谁写的代码，所以当硬件发生中断时，指令会立即停止，
+然后把控制权交给中断处理程序 (interrupt handler) 。
+这就是 CPU 处理并发的方式。</p>
+<blockquote>
+<p>然而，现代 CPU 也可以以并行的方式做很多事。
+大多数 CPU 是流水线式的 (pipelined) ，这意味着当前指令执行的时候，下个指令就准备好了。
+可能有一个分支预测程序 (branch predictor) 来尝试分析下个要准备的指令是什么。</p>
+<p>处理器也可能打乱执行顺序来重排指令顺序，如果处理器认为这样做会让指令更快执行的话，
+就不会 “询问” 或者 “告知” 程序员或 OS 它已经重排了指令。
+所以你可能不能保证 A 发生在 B 之前。</p>
+<p>CPU 会分担一些工作到单独的 “协处理器” (coprocessors) 上，比如用于浮点计算的 FPU ，
+从而让主 CPU 准备好执行其他任务。</p>
+<p>从总体来看，可以把 CPU 想象成以同步方式运行，但现在请注意到，这种想象是其实不对的，
+这在涉及并行、同步原语<sup class="footnote-reference"><a href="#同步原语">1</a></sup> 以及计算机与操作系统的安全时，尤为要注意。</p>
+</blockquote>
+<div class="footnote-definition" id="同步原语"><sup class="footnote-definition-label">1</sup>
+<p>synchronization primitives， 比如互斥锁 (mutexes) 和原子 (atomics)</p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="1_concurrent_vs_parallel.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="3_0_the_operating_system.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="1_concurrent_vs_parallel.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="3_0_the_operating_system.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+                <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-149686420-1', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+                <script type="text/javascript" src="theme/pagetoc.js"></script>
+        
+        
+    </body>
+</html>

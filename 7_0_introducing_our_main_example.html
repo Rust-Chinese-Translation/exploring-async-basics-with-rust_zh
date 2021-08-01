@@ -1,0 +1,424 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>例子简介 - 用 Rust 探索 Async</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+                <link rel="stylesheet" href="theme/pagetoc.css">
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">简介</a></li><li class="chapter-item expanded "><a href="1_concurrent_vs_parallel.html"><strong aria-hidden="true">1.</strong> 并发 vs 并行</a></li><li class="chapter-item expanded "><a href="2_async_history.html"><strong aria-hidden="true">2.</strong> 异步的历史</a></li><li class="chapter-item expanded "><a href="3_0_the_operating_system.html"><strong aria-hidden="true">3.</strong> OS 与 CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="3_1_communicating_with_the_os.html"><strong aria-hidden="true">3.1.</strong> 与 OS 通信</a></li><li class="chapter-item expanded "><a href="3_2_cross_platform_abstractions.html"><strong aria-hidden="true">3.2.</strong> 跨平台抽象</a></li><li class="chapter-item expanded "><a href="3_3_the_cpu_and_the_os.html"><strong aria-hidden="true">3.3.</strong> CPU 与 OS</a></li></ol></li><li class="chapter-item expanded "><a href="4_interrupts_firmware_io.html"><strong aria-hidden="true">4.</strong> 中断 | 固件 | I/O</a></li><li class="chapter-item expanded "><a href="5_strategies_for_handling_io.html"><strong aria-hidden="true">5.</strong> 处理 I/O 的策略</a></li><li class="chapter-item expanded "><a href="6_epoll_kqueue_iocp.html"><strong aria-hidden="true">6.</strong> Epoll | Kqueue | IOCP</a></li><li class="chapter-item expanded "><a href="7_0_introducing_our_main_example.html" class="active"><strong aria-hidden="true">7.</strong> 例子简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="7_1_what_is_node.html"><strong aria-hidden="true">7.1.</strong> 什么是 Node</a></li><li class="chapter-item expanded "><a href="7_2_whats_our_plan.html"><strong aria-hidden="true">7.2.</strong> 接下来的计划</a></li></ol></li><li class="chapter-item expanded "><a href="8_0_implementing_our_own_runtime.html"><strong aria-hidden="true">8.</strong> 实现自己的运行时</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="8_1_the_main_loop.html"><strong aria-hidden="true">8.1.</strong> 主循环</a></li><li class="chapter-item expanded "><a href="8_2_setting_up_runtime.html"><strong aria-hidden="true">8.2.</strong> 设置 runtime</a></li><li class="chapter-item expanded "><a href="8_3_timers.html"><strong aria-hidden="true">8.3.</strong> Timers</a></li><li class="chapter-item expanded "><a href="8_4_callbacks.html"><strong aria-hidden="true">8.4.</strong> Callbacks</a></li><li class="chapter-item expanded "><a href="8_5_threadpool.html"><strong aria-hidden="true">8.5.</strong> Threadpool</a></li><li class="chapter-item expanded "><a href="8_6_io_eventqueue.html"><strong aria-hidden="true">8.6.</strong> I/O 事件队列</a></li><li class="chapter-item expanded "><a href="8_8_cleaning_up.html"><strong aria-hidden="true">8.7.</strong> 清理</a></li><li class="chapter-item expanded "><a href="8_9_infrastructure.html"><strong aria-hidden="true">8.8.</strong> 基础设施</a></li></ol></li><li class="chapter-item expanded "><a href="9_0_modules.html"><strong aria-hidden="true">9.</strong> 模块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="9_1_file_module.html"><strong aria-hidden="true">9.1.</strong> 文件模块</a></li><li class="chapter-item expanded "><a href="9_2_crypto_module.html"><strong aria-hidden="true">9.2.</strong> 加密模块</a></li><li class="chapter-item expanded "><a href="9_3_http_module.html"><strong aria-hidden="true">9.3.</strong> Http 模块</a></li></ol></li><li class="chapter-item expanded "><a href="10_putting_pieces_together.html"><strong aria-hidden="true">10.</strong> 把代码组织起来</a></li><li class="chapter-item expanded "><a href="11_final_code.html"><strong aria-hidden="true">11.</strong> 最终代码</a></li><li class="chapter-item expanded "><a href="12_shortcuts_and_improvements.html"><strong aria-hidden="true">12.</strong> 捷径与改进</a></li><li class="chapter-item expanded affix "><a href="conclusion.html">总结</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">用 Rust 探索 Async</h1>
+
+                    <div class="right-buttons">
+                                                                        <a href="https://github.com/zjp-CN/exploring-async-basics-with-rust_zh" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="介绍主要例子"><a class="header" href="#介绍主要例子">介绍主要例子</a></h1>
+<p>现在我们终于来到了本书编写一些代码的部分。</p>
+<p>Node 事件循环 (event loop) 是一个经过多年开发的复杂软件。本书将不得不简化很多事情。</p>
+<p>本书将尝试实现对我们更好地理解 Node 的重要部分。
+最重要的是将它用作示例，我们可以在这当中使用从前几章中获得的知识来做出实际工作的东西。</p>
+<p>我们的主要目标是探索异步概念。以 Node 为例主要是为了好玩。</p>
+<p><strong>我们想写这样的东西：</strong></p>
+<pre><code class="language-rust  ignored">/// 把这个函数想象成你编写的 Javascript 程序
+fn Javascript() {
+    print(&quot;First call to read test.txt&quot;);
+    Fs::read(&quot;test.txt&quot;, |result| {
+        let text = result.into_string().unwrap();
+        let len = text.len();
+        print(format!(&quot;First count: {} characters.&quot;, len));
+
+        print(r#&quot;I want to create a &quot;magic&quot; number based on the text.&quot;#);
+        Crypto::encrypt(text.len(), |result| {
+            let n = result.into_int().unwrap();
+            print(format!(r#&quot;&quot;Encrypted&quot; number is: {}&quot;#, n));
+        })
+    });
+
+    print(&quot;Registering immediate timeout 1&quot;);
+    set_timeout(0, |_res| {
+        print(&quot;Immediate1 timed out&quot;);
+    });
+    print(&quot;Registering immediate timeout 2&quot;);
+    set_timeout(0, |_res| {
+        print(&quot;Immediate2 timed out&quot;);
+    });
+
+    // 再次读取文件并显示文本
+    print(&quot;Second call to read test.txt&quot;);
+    Fs::read(&quot;test.txt&quot;, |result| {
+        let text = result.into_string().unwrap();
+        let len = text.len();
+        print(format!(&quot;Second count: {} characters.&quot;, len));
+
+        // 再一次读文件，但不是并行的。
+        print(&quot;Third call to read test.txt&quot;);
+        Fs::read(&quot;test.txt&quot;, |result| {
+            let text = result.into_string().unwrap();
+            print_content(&amp;text, &quot;file read&quot;);
+        });
+    });
+
+    print(&quot;Registering a 3000 and a 500 ms timeout&quot;);
+    set_timeout(3000, |_res| {
+        print(&quot;3000ms timer timed out&quot;);
+        set_timeout(500, |_res| {
+            print(&quot;500ms timer(nested) timed out&quot;);
+        });
+    });
+
+    print(&quot;Registering a 1000 ms timeout&quot;);
+    set_timeout(1000, |_res| {
+        print(&quot;SETTIMEOUT&quot;);
+    });
+
+    // `http_get_slow` 让我们定义一个想要模拟的延迟
+    print(&quot;Registering http get request to google.com&quot;);
+    Http::http_get_slow(&quot;http//www.google.com&quot;, 2000, |result| {
+        let result = result.into_string().unwrap();
+        print_content(result.trim(), &quot;web call&quot;);
+    });
+}
+
+fn main() {
+    let rt = Runtime::new();
+    rt.run(Javascript);
+}
+</code></pre>
+<blockquote>
+<p>我们将在代码中的重要位置打印语句，以便我们可以了解实际代码发生的时间和地点。</p>
+</blockquote>
+<p>马上你就会发现我们在示例中编写的 Rust 代码有些奇怪。</p>
+<p>当我们想要像 Javascript 一样执行异步操作时，代码会使用回调，
+并且我们可以调用“神奇的”模块，例如 <code>Fs</code> 或 <code>Crypto</code>，就像从 Node 导入模块一样。</p>
+<p>我们这里的代码主要是调用用于注册事件和存储回调的函数，以便在事件准备好时运行。</p>
+<p><strong>一个例子是 <code>set timeout</code> 函数：</strong></p>
+<pre><code class="language-rust  ignored">set_timeout(0, |_res| {
+    print(&quot;Immediate1 timed out&quot;);
+});
+</code></pre>
+<p>在这里实际上注册了感兴趣的 <code>timeout</code> 事件，当该事件发生时，
+我们希望运行回调函数 <code>|_res| { print(&quot;Immediate1 timed out&quot;);  }</code>。</p>
+<p><code>_res</code> 是一个传递给回调的参数。在 Javascript 中，它会被省略，
+但由于我们使用了类型化语言，因此我们创建了一个名为 <code>Js</code> 的类型。</p>
+<p><code>Js</code> 是一个代表 Javascript 类型的枚举体。
+在 <code>set_timeout</code> 的情况下，它是 <code>Js::undefined</code> 。
+在 <code>Fs::read</code> 的情况下，它是 <code>Js::string</code> 等。</p>
+<p>运行这段代码后，我们会得到如下所示的内容：</p>
+<video autoplay loop>
+<source src="./images/example_run.mp4" type="video/mp4">
+Can't display video.
+</video>
+<p>输出结果：</p>
+<pre><code>Thread: main     First call to read test.txt
+Thread: main     Registering immediate timeout 1
+Thread: main     Registered timer event id: 2
+Thread: main     Registering immediate timeout 2
+Thread: main     Registered timer event id: 3
+Thread: main     Second call to read test.txt
+Thread: main     Registering a 3000 and a 500 ms timeout
+Thread: main     Registered timer event id: 5
+Thread: main     Registering a 1000 ms timeout
+Thread: main     Registered timer event id: 6
+Thread: main     Registering http get request to google.com
+Thread: pool3    received a task of type: File read
+Thread: pool2    received a task of type: File read
+Thread: main     Event with id: 7 registered.
+Thread: main     ===== TICK 1 =====
+Thread: main     Immediate1 timed out
+Thread: main     Immediate2 timed out
+Thread: pool3    finished running a task of type: File read.
+Thread: pool2    finished running a task of type: File read.
+Thread: main     First count: 39 characters.
+Thread: main     I want to create a &quot;magic&quot; number based on the text.
+Thread: pool3    received a task of type: Encrypt
+Thread: main     ===== TICK 2 =====
+Thread: main     SETTIMEOUT
+Thread: main     Second count: 39 characters.
+Thread: main     Third call to read test.txt
+Thread: main     ===== TICK 3 =====
+Thread: pool2    received a task of type: File read
+Thread: pool3    finished running a task of type: Encrypt.
+Thread: main     &quot;Encrypted&quot; number is: 63245986
+Thread: main     ===== TICK 4 =====
+Thread: pool2    finished running a task of type: File read.
+
+===== THREAD main START CONTENT - FILE READ =====
+Hello world! This is text to encrypt!
+... [Note: Abbreviated for display] ...
+===== END CONTENT =====
+
+Thread: main     ===== TICK 5 =====
+Thread: epoll    epoll event 7 is ready
+
+===== THREAD main START CONTENT - WEB CALL =====
+HTTP/1.1 302 Found
+Server: Cowboy
+Location: http://http/www.google.com
+... [Note: Abbreviated for display] ...
+===== END CONTENT =====
+
+Thread: main     ===== TICK 6 =====
+Thread: epoll    epoll event timeout is ready
+Thread: main     ===== TICK 7 =====
+Thread: main     3000ms timer timed out
+Thread: main     Registered timer event id: 10
+Thread: epoll    epoll event timeout is ready
+Thread: main     ===== TICK 8 =====
+Thread: main     500ms timer(nested) timed out
+Thread: pool0    received a task of type: Close
+Thread: pool1    received a task of type: Close
+Thread: pool2    received a task of type: Close
+Thread: pool3    received a task of type: Close
+Thread: epoll    received event of type: Close
+Thread: main     FINISHED
+</code></pre>
+<p>别担心，本书会解释一切，但我只是想从解释我们结束的地方开始。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="6_epoll_kqueue_iocp.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="7_1_what_is_node.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="6_epoll_kqueue_iocp.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="7_1_what_is_node.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+                <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-149686420-1', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+                <script type="text/javascript" src="theme/pagetoc.js"></script>
+        
+        
+    </body>
+</html>

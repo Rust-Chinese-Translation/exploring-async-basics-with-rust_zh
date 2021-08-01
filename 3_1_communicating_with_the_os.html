@@ -1,0 +1,670 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>与 OS 通信 - 用 Rust 探索 Async</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+                <link rel="stylesheet" href="theme/pagetoc.css">
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">简介</a></li><li class="chapter-item expanded "><a href="1_concurrent_vs_parallel.html"><strong aria-hidden="true">1.</strong> 并发 vs 并行</a></li><li class="chapter-item expanded "><a href="2_async_history.html"><strong aria-hidden="true">2.</strong> 异步的历史</a></li><li class="chapter-item expanded "><a href="3_0_the_operating_system.html"><strong aria-hidden="true">3.</strong> OS 与 CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="3_1_communicating_with_the_os.html" class="active"><strong aria-hidden="true">3.1.</strong> 与 OS 通信</a></li><li class="chapter-item expanded "><a href="3_2_cross_platform_abstractions.html"><strong aria-hidden="true">3.2.</strong> 跨平台抽象</a></li><li class="chapter-item expanded "><a href="3_3_the_cpu_and_the_os.html"><strong aria-hidden="true">3.3.</strong> CPU 与 OS</a></li></ol></li><li class="chapter-item expanded "><a href="4_interrupts_firmware_io.html"><strong aria-hidden="true">4.</strong> 中断 | 固件 | I/O</a></li><li class="chapter-item expanded "><a href="5_strategies_for_handling_io.html"><strong aria-hidden="true">5.</strong> 处理 I/O 的策略</a></li><li class="chapter-item expanded "><a href="6_epoll_kqueue_iocp.html"><strong aria-hidden="true">6.</strong> Epoll | Kqueue | IOCP</a></li><li class="chapter-item expanded "><a href="7_0_introducing_our_main_example.html"><strong aria-hidden="true">7.</strong> 例子简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="7_1_what_is_node.html"><strong aria-hidden="true">7.1.</strong> 什么是 Node</a></li><li class="chapter-item expanded "><a href="7_2_whats_our_plan.html"><strong aria-hidden="true">7.2.</strong> 接下来的计划</a></li></ol></li><li class="chapter-item expanded "><a href="8_0_implementing_our_own_runtime.html"><strong aria-hidden="true">8.</strong> 实现自己的运行时</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="8_1_the_main_loop.html"><strong aria-hidden="true">8.1.</strong> 主循环</a></li><li class="chapter-item expanded "><a href="8_2_setting_up_runtime.html"><strong aria-hidden="true">8.2.</strong> 设置 runtime</a></li><li class="chapter-item expanded "><a href="8_3_timers.html"><strong aria-hidden="true">8.3.</strong> Timers</a></li><li class="chapter-item expanded "><a href="8_4_callbacks.html"><strong aria-hidden="true">8.4.</strong> Callbacks</a></li><li class="chapter-item expanded "><a href="8_5_threadpool.html"><strong aria-hidden="true">8.5.</strong> Threadpool</a></li><li class="chapter-item expanded "><a href="8_6_io_eventqueue.html"><strong aria-hidden="true">8.6.</strong> I/O 事件队列</a></li><li class="chapter-item expanded "><a href="8_8_cleaning_up.html"><strong aria-hidden="true">8.7.</strong> 清理</a></li><li class="chapter-item expanded "><a href="8_9_infrastructure.html"><strong aria-hidden="true">8.8.</strong> 基础设施</a></li></ol></li><li class="chapter-item expanded "><a href="9_0_modules.html"><strong aria-hidden="true">9.</strong> 模块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="9_1_file_module.html"><strong aria-hidden="true">9.1.</strong> 文件模块</a></li><li class="chapter-item expanded "><a href="9_2_crypto_module.html"><strong aria-hidden="true">9.2.</strong> 加密模块</a></li><li class="chapter-item expanded "><a href="9_3_http_module.html"><strong aria-hidden="true">9.3.</strong> Http 模块</a></li></ol></li><li class="chapter-item expanded "><a href="10_putting_pieces_together.html"><strong aria-hidden="true">10.</strong> 把代码组织起来</a></li><li class="chapter-item expanded "><a href="11_final_code.html"><strong aria-hidden="true">11.</strong> 最终代码</a></li><li class="chapter-item expanded "><a href="12_shortcuts_and_improvements.html"><strong aria-hidden="true">12.</strong> 捷径与改进</a></li><li class="chapter-item expanded affix "><a href="conclusion.html">总结</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">用 Rust 探索 Async</h1>
+
+                    <div class="right-buttons">
+                                                                        <a href="https://github.com/zjp-CN/exploring-async-basics-with-rust_zh" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <p>本章会深入谈到：</p>
+<ul>
+<li>系统调用 (system calls，或 syscalls) 是什么</li>
+<li>抽象层次 (abstraction levels)</li>
+<li>编写底层跨平台代码的难点</li>
+</ul>
+<h1 id="系统调用入门"><a class="header" href="#系统调用入门">系统调用入门</a></h1>
+<p>与 OS 通信是通过系统调用实现的。
+系统调用是 OS 提供的公有 API ，作为 OS 使用者编写的程序可以用系统调用来与 OS 通信。</p>
+<p>大多数时候，我们作为编程语言的程序员或某运行时的使用者，这些系统调用已经被抽象出来了。
+像 Rust 这样的语言，进行一次系统调用是轻而易举的，下面会谈到。</p>
+<p>现在，系统调用是与内核通信的特有例子。
+UNIX 类的内核有很多相似之处，UNIX 系统通过 <strong><code>libc</code></strong> 暴露出来。</p>
+<p>Windows 则与基于 UNIX 的系统完全不同，它使用自己的 API，常被称作 WinAPI 。</p>
+<p>大多数情况下，有一种方法可以实现同样的目标。
+在功能方面，你可能没有注意到很大的差异，但正如我们将在下面看到的，
+特别是当我们深入研究 <a href="./6_epoll_kqueue_iocp.html">epoll、kqueue 和 IOCP</a> 的工作方式时，
+它们在实现此功能的方式上可能会有很大的差异。</p>
+<h1 id="系统调用的例子"><a class="header" href="#系统调用的例子">系统调用的例子</a></h1>
+<p>为了更熟悉系统调用，我们会在三大系统上 （BSD(macos)、Linux 和 Windows） 实现一个很基础的系统调用。
+也会看看如何以三种抽象层次实现它。</p>
+<p>我们等会实现的系统调用是在输出 <code>stdout</code> 时用到的，因为这是一个常见的操作，见识这如何工作会很有趣。</p>
+<h2 id="低层次抽象"><a class="header" href="#低层次抽象">低层次抽象</a></h2>
+<p>为了达到目的，我们需要写一些 <a href="https://doc.rust-lang.org/1.0.0/book/inline-assembly.html">内联汇编</a> 。
+开始写传给 CPU 的指令吧。</p>
+<blockquote>
+<p>如果你想知道更详细的内联汇编知识，可以参考我的前一本书 <a href="https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/an-example-we-can-build-upon">green threads</a> 的相关章节。</p>
+</blockquote>
+<p>现在，基于这个层次的抽象，我们要为三种不同平台写不同的代码。</p>
+<p>在 Linux 和 macOS 上，我们希望这个系统调用叫做 <code>write</code> 。
+当你开始一个线程时，基于文件描述符 (file descriptors) 和 stdout 概念的系统操作就已经存在了。</p>
+<ol>
+<li>Linux 平台的代码会这样写：</li>
+</ol>
+<p>（你可以点击右上角的 <code>▶</code> 按钮来运行这段代码）</p>
+<pre><pre class="playground"><code class="language-rust">#![feature(llvm_asm)]
+fn main() {
+    let message = String::from(&quot;Hello world from interrupt!\n&quot;);
+    syscall(message);
+}
+
+#[cfg(target_os = &quot;linux&quot;)]
+#[inline(never)]
+fn syscall(message: String) {
+    let msg_ptr = message.as_ptr();
+    let len = message.len();
+
+    unsafe {
+        llvm_asm!(&quot;
+        mov     $$1, %rax   # system call 1 is write on Linux
+        mov     $$1, %rdi   # file handle 1 is stdout
+        mov     $0, %rsi    # address of string to output
+        mov     $1, %rdx    # number of bytes
+        syscall             # call kernel, syscall interrupt
+    &quot;
+        :
+        : &quot;r&quot;(msg_ptr), &quot;r&quot;(len)
+        : &quot;rax&quot;, &quot;rdi&quot;, &quot;rsi&quot;, &quot;rdx&quot;
+        )
+    }
+}
+</code></pre></pre>
+<p>在 Linux 上 <code>write</code> syscall <sup class="footnote-reference"><a href="#`write` syscall">1</a></sup> 开始的代码是 <code>1</code> ，
+上述代码中把 <code>$$1</code> 表示字面值 1 写到了 <code>rax</code> 寄存器 (register) 。</p>
+<blockquote>
+<p>在内联汇编中 <code>$$</code> 使用了 AT&amp;T 语法，表示你一个字面值 (literal value) 。
+单个 <code>$</code> 表示引用一个参数的值，所以 <code>$0</code> 表示第一个参数的值，即 <code>msg_ptr</code> 的值。
+我们也需要清空 (clobber) 写入的寄存器，所以得告诉编辑器那正在被修改，别使用寄存器里的任何值。</p>
+</blockquote>
+<div class="footnote-definition" id="`write` syscall"><sup class="footnote-definition-label">1</sup>
+<p>译者注：为了文字简洁，<code>write</code> syscall 、<code>write</code> 不被翻译，
+它们表示这个例子里功能为 <code>write</code> 的系统调用。</p>
+</div>
+<p>巧合的是，把 <code>1</code> 这个值放入 <code>rdi</code> 寄存器意味着我们希望写入 <code>stdout</code> 这个文件描述符。
+这和 <code>write</code> 也有代码 <code>1</code> 无关。</p>
+<p>接下来，我们分别给 <code>rsi</code>、<code>rdx</code> 寄存器传入字符串缓冲区 (string buffer) 的地址和长度， 
+然后调用 <code>syscall</code> 指令。</p>
+<blockquote>
+<p><code>syscall</code> 指令是一个相当新的指令。
+早期 <code>x86</code> 架构的 32 位系统上，你发出一个软件中断指令 <code>int 0x80</code> 来进行一次系统调用。
+软件中断指令在这里写的代码中是慢的，因此后面增加了名叫 <code>syscall</code> 的单独的指令。
+<code>syscall</code> 指令使用 <a href="http://articles.manugarg.com/systemcallinlinux2_6.html">VDSO</a> ，
+这是一个附属于每个进程内存的内存页 (memory page) ，
+因此执行这个系统调用无需上下文切换 (context switch) 。</p>
+</blockquote>
+<ol start="2">
+<li>在 macOS 上的代码是这样的：</li>
+</ol>
+<p>（由于 Rust playground 运行在 Linux 上，所以这个例子不能直接运行）</p>
+<pre><code class="language-rust  ignored">#![feature(llvm_asm)]
+fn main() {
+    let message = String::from(&quot;Hello world from interrupt!\n&quot;);
+    syscall(message);
+}
+
+#[cfg(target_os = &quot;macos&quot;)]
+fn syscall(message: String) {
+    let msg_ptr = message.as_ptr();
+    let len = message.len();
+    unsafe {
+        llvm_asm!(
+            &quot;
+        mov     $$0x2000004, %rax   # system call 0x2000004 is write on macos
+        mov     $$1, %rdi           # file handle 1 is stdout
+        mov     $0, %rsi            # address of string to output
+        mov     $1, %rdx            # number of bytes
+        syscall                     # call kernel, syscall interrupt
+    &quot;
+        :
+        : &quot;r&quot;(msg_ptr), &quot;r&quot;(len)
+        : &quot;rax&quot;, &quot;rdi&quot;, &quot;rsi&quot;, &quot;rdx&quot;
+        )
+    };
+}
+</code></pre>
+<p>如你所见，除了 <code>0x2000004</code> 代码不再是 <code>1</code> ，这里的代码与 Linux 上的例子并没有太大区别。</p>
+<ol start="3">
+<li>Windows 平台上呢？</li>
+</ol>
+<p>这是个好机会来解释一下，为什么上面写的这种代码是不好的做法。</p>
+<p>如果你想让代码在未来很长一段时间都能工作，那么你不得不担心 OS 给你提供的保障 (guarantees) 。
+据我所知，Linux 和 macOS 会提供保障，比如 macOS 上的 <code>$$0x2000004</code> 总是会代表 <code>write</code> ，
+虽然我不确定这些保障会多稳定。Windows 在这样的底层内部代码方面不提供任何保障。</p>
+<p>Windows 已经很多次改变过内部代码，也不提供官方文档。
+我们能做的唯一一件事是反向工程表 (reverse engineered tables) ，像<a href="https://j00ru.vexillium.org/syscalls/nt/64/">这样</a>。
+这意味着以前代表 <code>write</code> 的代码在更新 Windows 系统之后可能变成了 <code>delete</code> 。</p>
+<h2 id="进一步抽象"><a class="header" href="#进一步抽象">进一步抽象</a></h2>
+<p>使用三大 OS 提供的 API 来进行抽象。</p>
+<p>这个抽象帮助我们删除一些代码，因为在这个具体的例子中，幸运的是，Linux 和 macOS 上的系统调用是一样的，
+所以如果不在 Windows 平台，只需使用 <code>#[cfg(not(target_os = &quot;windows&quot;))]</code> 
+这个条件编译标志 (conditional compilation flag) ；如果在 Windows 平台，就相反。</p>
+<h3 id="使用-linux-和-macos-提供的-api"><a class="header" href="#使用-linux-和-macos-提供的-api">使用 Linux 和 macOS 提供的 API</a></h3>
+<pre><pre class="playground"><code class="language-rust">use std::io;
+
+fn main() {
+    let sys_message = String::from(&quot;Hello world from syscall!\n&quot;);
+    syscall(sys_message).unwrap();
+}
+
+// and: http://man7.org/linux/man-pages/man2/write.2.html
+#[cfg(not(target_os = &quot;windows&quot;))]
+#[link(name = &quot;c&quot;)]
+extern &quot;C&quot; {
+    fn write(fd: u32, buf: *const u8, count: usize) -&gt; i32;
+}
+
+#[cfg(not(target_os = &quot;windows&quot;))]
+fn syscall(message: String) -&gt; io::Result&lt;()&gt; {
+    let msg_ptr = message.as_ptr();
+    let len = message.len();
+    let res = unsafe { write(1, msg_ptr, len) };
+
+    if res == -1 {
+        return Err(io::Error::last_os_error());
+    }
+    Ok(())
+}
+
+</code></pre></pre>
+<p>我来解释一下上面的代码。</p>
+<pre><code class="language-rust  ignored">#[link(name = &quot;c&quot;)]
+</code></pre>
+<p>每个 Linux 都有某个版本的 <code>libc</code> ，这是与 OS 通信的 C 库。
+拥有一个一致 API 的 <code>libc</code> 意味着不破坏任何人代码的情况下改变底层实现。
+这个 flag 告诉编译器链接到编译目标系统的 C 库。</p>
+<pre><code class="language-rust  ignored">extern &quot;C&quot; {
+    fn write(fd: u32, buf: *const u8, count: usize);
+}
+</code></pre>
+<p><code>extern &quot;C&quot;</code> 或 <code>extern</code> （如果未指定默认为 C 语言） 表示按照 C 的调用方式链接到 C 库中的具体函数。
+接下来你会看到 Windows 情况下需要更改这里，因为 Windows 采用不同于 UNIX 类的调用方式。</p>
+<p>链接到的函数必须有相同的名称，在这个例子中是 <code>write</code> 。
+参数不必同名，但必须按照正确的顺序，按照链接库的名字给参数命名是好的做法。</p>
+<p><code>write</code> 函数接收一个 <code>file descriptor</code> ，在这个例子中是 <code>stdout</code> 的句柄 (handle) ，
+还接收一个 <code>u8</code> 数组的指针，以及缓冲区的长度。</p>
+<pre><code class="language-rust  ignored">#[cfg(not(target_os = &quot;windows&quot;))]
+fn syscall_libc(message: String) {
+    let msg_ptr = message.as_ptr();
+    let len = message.len();
+    unsafe { write(1, msg_ptr, len) };
+}
+</code></pre>
+<p>这段代码先获得了字符串背后缓冲区的指针，这是 <code>*const u8</code> 类型的指针，对应于 <code>buf</code> 参数。
+缓冲区的长度 <code>len</code> 对应于 <code>count</code> 参数。</p>
+<p>你或许想问为何知道 <code>1</code> 是 <code>stdout</code> 的文件句柄，哪里可以找到这个值。</p>
+<p>从 Rust 编写系统调用时，你会发现很多这样的情况。
+通常常量 (constants) 被定义在 C 的头文件中，那里是无法链接到的，所以需要进行搜索。
+<code>1</code> 在 UNIX 系统上总是代表 <code>stdout</code> 的文件描述符。</p>
+<blockquote>
+<p><a href="https://github.com/rust-lang/libc">libc</a> crate 所做的事情正好是提供封装的 <code>libc</code> 函数和这些常量，
+等会儿会看到另一种写法，不使用这里写的类型代码。</p>
+</blockquote>
+<p>调用 FFI 函数总是 unsafe 的，所以需要使用 <code>unsafe</code> 关键字。</p>
+<h3 id="使用-windows-的-api"><a class="header" href="#使用-windows-的-api">使用 Windows 的 API</a></h3>
+<p>（你需要复制下面的代码到 Windows 系统的电脑上，然后再运行）</p>
+<pre><code class="language-rust  ignored">use std::io;
+
+fn main() {
+    let sys_message = String::from(&quot;Hello world from syscall!\n&quot;);
+    syscall(sys_message).unwrap();
+}
+
+#[cfg(target_os = &quot;windows&quot;)]
+#[link(name = &quot;kernel32&quot;)]
+extern &quot;stdcall&quot; {
+    /// https://docs.microsoft.com/en-us/windows/console/getstdhandle
+    fn GetStdHandle(nStdHandle: i32) -&gt; i32;
+    /// https://docs.microsoft.com/en-us/windows/console/writeconsole
+    fn WriteConsoleW(
+        hConsoleOutput: i32,
+        lpBuffer: *const u16,
+        numberOfCharsToWrite: u32,
+        lpNumberOfCharsWritten: *mut u32,
+        lpReserved: *const std::ffi::c_void,
+    ) -&gt; i32;
+}
+
+#[cfg(target_os = &quot;windows&quot;)]
+fn syscall(message: String) -&gt; io::Result&lt;()&gt; {
+
+    // let's convert our utf-8 to a format windows understands
+    let msg: Vec&lt;u16&gt; = message.encode_utf16().collect();
+    let msg_ptr = msg.as_ptr();
+    let len = msg.len() as u32;
+
+    let mut output: u32 = 0;
+        let handle = unsafe { GetStdHandle(-11) };
+        if handle  == -1 {
+            return Err(io::Error::last_os_error())
+        }
+
+        let res = unsafe {
+            WriteConsoleW(handle, msg_ptr, len, &amp;mut output, std::ptr::null())
+            };
+        if res  == 0 {
+            return Err(io::Error::last_os_error());
+        }
+
+    assert_eq!(output as usize, len);
+    Ok(())
+}
+</code></pre>
+<p>上面的代码开始变得复杂起来了，花点时间一行行理解这里做了什么吧。</p>
+<pre><code class="language-rust  ignored">#[cfg(target_os = &quot;windows&quot;)]
+#[link(name = &quot;kernel32&quot;)]
+</code></pre>
+<p>第一行只是告诉编辑器只在 Windows 目标平台上编译这段代码。</p>
+<p>第二行链接器指令 (linker directive) ，告诉链接器链接到 <code>kernel32</code> 这个库。</p>
+<pre><code class="language-rust  ignored">extern &quot;stdcall&quot; {
+    /// https://docs.microsoft.com/en-us/windows/console/getstdhandle
+    fn GetStdHandle(nStdHandle: i32) -&gt; i32;
+    /// https://docs.microsoft.com/en-us/windows/console/writeconsole
+    fn WriteConsoleW(
+        hConsoleOutput: i32,
+        lpBuffer: *const u16,
+        numberOfCharsToWrite: u32,
+        lpNumberOfCharsWritten: *mut u32,
+        lpReserved: *const std::ffi::c_void,
+    ) -&gt; i32;
+}
+</code></pre>
+<p>首先， <code>extern &quot;stdcall&quot;</code> 告诉编辑器不使用 <code>C</code> 调用方式，而使用 <code>stdcall</code> 的 Windows 调用方式。</p>
+<p>然后是希望链接到的函数。在 Windows 上，为了让例子工作，这里需要两个函数：
+<code>GetStdHandle</code> 和 <code>WriteConsoleW</code> 。</p>
+<p><code>GetStdHandle</code> 返回标准设备（比如 <code>stdout</code> ）的引用。</p>
+<p><code>WriteConsole</code> 有两种接收方式：<code>WriteConsoleW</code> 接收 Unicode 文本， 
+<code>WriteConsoleA</code> 接收 ANSI 编码的文本。</p>
+<p>如果你只写入英语文本，ANSI 编码是不错的选择，但是一旦你写其他语言 ——
+你可能需要使用不以 <code>ANSI</code> 表示而以 <code>utf-8</code> 编码的特殊字符 ——
+程序就会 break。</p>
+<p>这就是为什么把 <code>utf-8</code> 编码的文本转换成 <code>utf-16</code> 编码的 Unicode 代码点 (codepoints) ，
+<code>utf-16</code> 代码点可以表示这些字符，而且被 <code>WriteConsoleW</code> 函数使用。</p>
+<pre><code class="language-rust  ignored">#[cfg(target_os = &quot;windows&quot;)]
+fn syscall(message: String) -&gt; io::Result&lt;()&gt; {
+
+    // let's convert our utf-8 to a format windows understands
+    let msg: Vec&lt;u16&gt; = message.encode_utf16().collect();
+    let msg_ptr = msg.as_ptr();
+    let len = msg.len() as u32;
+
+    let mut output: u32 = 0;
+        let handle = unsafe { GetStdHandle(-11) };
+        if handle  == -1 {
+            return Err(io::Error::last_os_error())
+        }
+
+        let res = unsafe {
+            WriteConsoleW(handle, msg_ptr, len, &amp;mut output, std::ptr::null())
+            };
+
+        if res  == 0 {
+            return Err(io::Error::last_os_error());
+        }
+
+    assert_eq!(output, len);
+    Ok(())
+}
+</code></pre>
+<p>这里做的第一件事是把文本转换成 Windows 使用的 utf-16 编码。
+幸好 Rust 有一个内置的函数进行这种转换。
+<code>encode_utf16</code> 返回 <code>u16</code> 代码点的迭代器，从而可以变成 <code>Vec</code> 。</p>
+<pre><code class="language-rust  ignored">let msg: Vec&lt;u16&gt; = message.encode_utf16().collect();
+let msg_ptr = msg.as_ptr();
+let len = msg.len() as u32;
+</code></pre>
+<p>Next, we get the pointer to the underlying buffer of our <code>Vec</code> and get the
+length.</p>
+<pre><code class="language-rust  ignored">let handle = unsafe { GetStdHandle(-11) };
+   if handle  == -1 {
+       return Err(io::Error::last_os_error())
+   }
+</code></pre>
+<p>下一步是调用 <code>GetStdHandle</code> 。这里给它传入 值 <code>-11</code> 。
+针对不同标准设备 (standard devices) 传入的值在 <code>GetStdHandle</code> 的文档里有描述：</p>
+<table><thead><tr><th>Handle</th><th>Value</th></tr></thead><tbody>
+<tr><td>Stdin</td><td>-10</td></tr>
+<tr><td>Stdout</td><td>-11</td></tr>
+<tr><td>StdErr</td><td>-12</td></tr>
+</tbody></table>
+<p>找这里所调用函数的文档和信息并不常见，但是当我们的确需要找这些时，并不困难找到。</p>
+<p>返回值的代码（比如 0、-1 的含义）在文档中也描述得很详细，
+这里和 Linux/macOS 系统调用一样，对潜在的错误进行处理。</p>
+<pre><code class="language-rust  ignored">let res = unsafe {
+    WriteConsoleW(handle, msg_ptr, len, &amp;mut output, std::ptr::null())
+    };
+
+if res  == 0 {
+    return Err(io::Error::last_os_error());
+}
+</code></pre>
+<p>这一步调用了 <code>WriteConsoleW</code> 函数。没有太特别要说明的。</p>
+<h2 id="最高层次的抽象"><a class="header" href="#最高层次的抽象">最高层次的抽象</a></h2>
+<p>这是一个简单的例子，大多数库会提供高级别的抽象。在 Rust 中，可以如此简单：</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>println!(&quot;Hello world from Stdlib&quot;);
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="最终跨平台系统调用代码"><a class="header" href="#最终跨平台系统调用代码">最终跨平台系统调用代码</a></h2>
+<pre><pre class="playground"><code class="language-rust">use std::io;
+
+fn main() {
+    let sys_message = String::from(&quot;Hello world from syscall!\n&quot;);
+    syscall(sys_message).unwrap();
+}
+
+// and: http://man7.org/linux/man-pages/man2/write.2.html
+#[cfg(not(target_os = &quot;windows&quot;))]
+#[link(name = &quot;c&quot;)]
+extern &quot;C&quot; {
+    fn write(fd: u32, buf: *const u8, count: usize) -&gt; i32;
+}
+
+#[cfg(not(target_os = &quot;windows&quot;))]
+fn syscall(message: String) -&gt; io::Result&lt;()&gt; {
+    let msg_ptr = message.as_ptr();
+    let len = message.len();
+    let res = unsafe { write(1, msg_ptr, len) };
+
+    if res == -1 {
+        return Err(io::Error::last_os_error());
+    }
+    Ok(())
+}
+
+#[cfg(target_os = &quot;windows&quot;)]
+#[link(name = &quot;kernel32&quot;)]
+extern &quot;stdcall&quot; {
+    /// https://docs.microsoft.com/en-us/windows/console/getstdhandle
+    fn GetStdHandle(nStdHandle: i32) -&gt; i32;
+    /// https://docs.microsoft.com/en-us/windows/console/writeconsole
+    fn WriteConsoleW(
+        hConsoleOutput: i32,
+        lpBuffer: *const u16,
+        numberOfCharsToWrite: u32,
+        lpNumberOfCharsWritten: *mut u32,
+        lpReserved: *const std::ffi::c_void,
+    ) -&gt; i32;
+}
+
+#[cfg(target_os = &quot;windows&quot;)]
+fn syscall(message: String) -&gt; io::Result&lt;()&gt; {
+
+    // let's convert our utf-8 to a format windows understands
+    let msg: Vec&lt;u16&gt; = message.encode_utf16().collect();
+    let msg_ptr = msg.as_ptr();
+    let len = msg.len() as u32;
+
+    let mut output: u32 = 0;
+        let handle = unsafe { GetStdHandle(-11) };
+        if handle  == -1 {
+            return Err(io::Error::last_os_error())
+        }
+
+        let res = unsafe {
+            WriteConsoleW(handle, msg_ptr, len, &amp;mut output, std::ptr::null())
+            };
+
+        if res  == 0 {
+            return Err(io::Error::last_os_error());
+        }
+
+    assert_eq!(output, len);
+    Ok(())
+}
+</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="3_0_the_operating_system.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="3_2_cross_platform_abstractions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="3_0_the_operating_system.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="3_2_cross_platform_abstractions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+                <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-149686420-1', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+                <script type="text/javascript" src="theme/pagetoc.js"></script>
+        
+        
+    </body>
+</html>

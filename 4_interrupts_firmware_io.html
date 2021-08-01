@@ -1,0 +1,380 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>中断 | 固件 | I/O - 用 Rust 探索 Async</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+                <link rel="stylesheet" href="theme/pagetoc.css">
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">简介</a></li><li class="chapter-item expanded "><a href="1_concurrent_vs_parallel.html"><strong aria-hidden="true">1.</strong> 并发 vs 并行</a></li><li class="chapter-item expanded "><a href="2_async_history.html"><strong aria-hidden="true">2.</strong> 异步的历史</a></li><li class="chapter-item expanded "><a href="3_0_the_operating_system.html"><strong aria-hidden="true">3.</strong> OS 与 CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="3_1_communicating_with_the_os.html"><strong aria-hidden="true">3.1.</strong> 与 OS 通信</a></li><li class="chapter-item expanded "><a href="3_2_cross_platform_abstractions.html"><strong aria-hidden="true">3.2.</strong> 跨平台抽象</a></li><li class="chapter-item expanded "><a href="3_3_the_cpu_and_the_os.html"><strong aria-hidden="true">3.3.</strong> CPU 与 OS</a></li></ol></li><li class="chapter-item expanded "><a href="4_interrupts_firmware_io.html" class="active"><strong aria-hidden="true">4.</strong> 中断 | 固件 | I/O</a></li><li class="chapter-item expanded "><a href="5_strategies_for_handling_io.html"><strong aria-hidden="true">5.</strong> 处理 I/O 的策略</a></li><li class="chapter-item expanded "><a href="6_epoll_kqueue_iocp.html"><strong aria-hidden="true">6.</strong> Epoll | Kqueue | IOCP</a></li><li class="chapter-item expanded "><a href="7_0_introducing_our_main_example.html"><strong aria-hidden="true">7.</strong> 例子简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="7_1_what_is_node.html"><strong aria-hidden="true">7.1.</strong> 什么是 Node</a></li><li class="chapter-item expanded "><a href="7_2_whats_our_plan.html"><strong aria-hidden="true">7.2.</strong> 接下来的计划</a></li></ol></li><li class="chapter-item expanded "><a href="8_0_implementing_our_own_runtime.html"><strong aria-hidden="true">8.</strong> 实现自己的运行时</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="8_1_the_main_loop.html"><strong aria-hidden="true">8.1.</strong> 主循环</a></li><li class="chapter-item expanded "><a href="8_2_setting_up_runtime.html"><strong aria-hidden="true">8.2.</strong> 设置 runtime</a></li><li class="chapter-item expanded "><a href="8_3_timers.html"><strong aria-hidden="true">8.3.</strong> Timers</a></li><li class="chapter-item expanded "><a href="8_4_callbacks.html"><strong aria-hidden="true">8.4.</strong> Callbacks</a></li><li class="chapter-item expanded "><a href="8_5_threadpool.html"><strong aria-hidden="true">8.5.</strong> Threadpool</a></li><li class="chapter-item expanded "><a href="8_6_io_eventqueue.html"><strong aria-hidden="true">8.6.</strong> I/O 事件队列</a></li><li class="chapter-item expanded "><a href="8_8_cleaning_up.html"><strong aria-hidden="true">8.7.</strong> 清理</a></li><li class="chapter-item expanded "><a href="8_9_infrastructure.html"><strong aria-hidden="true">8.8.</strong> 基础设施</a></li></ol></li><li class="chapter-item expanded "><a href="9_0_modules.html"><strong aria-hidden="true">9.</strong> 模块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="9_1_file_module.html"><strong aria-hidden="true">9.1.</strong> 文件模块</a></li><li class="chapter-item expanded "><a href="9_2_crypto_module.html"><strong aria-hidden="true">9.2.</strong> 加密模块</a></li><li class="chapter-item expanded "><a href="9_3_http_module.html"><strong aria-hidden="true">9.3.</strong> Http 模块</a></li></ol></li><li class="chapter-item expanded "><a href="10_putting_pieces_together.html"><strong aria-hidden="true">10.</strong> 把代码组织起来</a></li><li class="chapter-item expanded "><a href="11_final_code.html"><strong aria-hidden="true">11.</strong> 最终代码</a></li><li class="chapter-item expanded "><a href="12_shortcuts_and_improvements.html"><strong aria-hidden="true">12.</strong> 捷径与改进</a></li><li class="chapter-item expanded affix "><a href="conclusion.html">总结</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">用 Rust 探索 Async</h1>
+
+                    <div class="right-buttons">
+                                                                        <a href="https://github.com/zjp-CN/exploring-async-basics-with-rust_zh" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="中断--固件--io"><a class="header" href="#中断--固件--io">中断 | 固件 | I/O</a></h1>
+<p>我们就要结束本书通用 CS 的话题了。</p>
+<p>这一章会把知识联系起来，看看整个计算机是如何作为一个系统来处理 I/O 和并发的。</p>
+<h2 id="总览"><a class="header" href="#总览">总览</a></h2>
+<p>以下是从网卡读取数据的流程图：</p>
+<a href="./images/AsyncBasicsSimplified.png" target="_blank">
+![Simplified Overview](./images/AsyncBasicsSimplified.png)
+</a>
+<p style="font-style: italic; text-align: center;">点击图片，将在新窗口打开</p>
+<blockquote>
+<p><strong>声明：</strong>
+这原本是十分复杂的操作，但这里把事情简化了。我们跳过几步，将重点放在大多数人感兴趣的地方上。</p>
+</blockquote>
+<h2 id="1-解读我们编写的代码"><a class="header" href="#1-解读我们编写的代码">1. 解读我们编写的代码</a></h2>
+<p>通过向 OS 发出一个系统调用来注册 (register) 一个 socket 。
+在 macOS/Linux 上会得到 <code>file descriptor</code> ，而在 Windows 上得到 <code>socket</code> 。</p>
+<p>然后是我们感兴趣的这个 socket 上的 <code>read</code> 事件。</p>
+<h2 id="2-向操作系统注册事件"><a class="header" href="#2-向操作系统注册事件">2. 向操作系统注册事件</a></h2>
+<p>有三种不同的处理方式：</p>
+<ol type="A">
+<li>
+<p>告诉 OS 我们对 <code>Read</code> 事件感兴趣，但我们希望等待线程的控制权让给 OS 来让 <code>Read</code> 事件发生。
+然后 OS 通过存储寄存器状态挂起线程，再切换到其他线程。</p>
+<p><strong>从我们的角度看，在有数据可读之前，这会阻塞线程。</strong></p>
+</li>
+<li>
+<p>告诉 OS 我们对 <code>Read</code> 事件感兴趣，但我们只希望获取任务的句柄，通过轮询 <code>poll</code> 来检查事件是否准备好。</p>
+<p><strong>OS 不会挂起线程，所以这不会阻塞代码。</strong></p>
+</li>
+<li>
+<p>告诉 OS 我们可能对许多事件感兴趣，但我们希望订阅一个事件队列。
+当轮询这个队列时，在一个或更多事件发生之前，会发生阻塞。</p>
+<p><strong>当我们等待时间发生时，这会阻塞线程。</strong></p>
+</li>
+</ol>
+<blockquote>
+<p>我的下一本书将是关于替代 C 的，因为它是一个非常有趣的处理 I/O 事件的模型，
+这对于理解为什么 Rust 的并发抽象是这样建模的很重要。因此，这里不作详细介绍。</p>
+</blockquote>
+<h2 id="3-网卡"><a class="header" href="#3-网卡">3. 网卡</a></h2>
+<blockquote>
+<p>我们会跳过一些对理解这个话题不太重要的步骤。</p>
+</blockquote>
+<p>在网卡上有一个运行专用固件的微型控制器。我们可以想象这个微型控制器是在一个忙轮询检查是否有数据传入。</p>
+<blockquote>
+<p>网卡处理其内部的确切方式很可能与此不同。
+重点是，网卡上有一个非常简单但专门用于检查是否有传入事件的 CPU 。</p>
+</blockquote>
+<p>一旦固件接收传入的数据，它就会发出硬件中断 (Hardware Interrupt) 。</p>
+<h2 id="4-硬件中断"><a class="header" href="#4-硬件中断">4. 硬件中断</a></h2>
+<blockquote>
+<p>这是一个简化版的解释。如果你想深入了解，建议你阅读 Robert Mustacchi 的文章
+<a href="https://www.joyent.com/blog/virtualizing-nics">Turtles on the wire: understanding how the OS uses the modern NIC</a> 。</p>
+</blockquote>
+<p>现代 CPU 有一组 <code>Interrupt Request Lines</code> （中断请求线） 来处理发生自外部设备的事件。
+CPU 有一组固定的中断线。</p>
+<p>硬件中断 (hardware interrupt) 是一种随时可以发生的电信号。
+CPU 立刻<strong>中断</strong>其正常工作流程，通过存储其寄存器的状态并查找中断处理程序来处理中断。
+中断处理程序 (interrupt handler) 在中断描述符表 (Interrupt Descriptor Table) 中定义。</p>
+<h2 id="5-中断处理程序"><a class="header" href="#5-中断处理程序">5. 中断处理程序</a></h2>
+<p>中断描述符表 <a href="https://en.wikipedia.org/wiki/Interrupt_descriptor_table">Interrupt Descriptor Table (IDT)</a> 是 OS 或驱动程序为可能发生的中断而注册处理程序的表。
+每个入口 (entry) 都指向一个特定中断的处理函数。网卡的处理函数通常由网卡的驱动程序 (driver) 注册和处理。</p>
+<blockquote>
+<p>IDT 在图中看起来像存储在 CPU 上，而实际并不是。
+IDT 位于主内存 (main memory) 的固定位置上。
+CPU 只在它的某个寄存器上保存指向这个表的指针。</p>
+</blockquote>
+<h2 id="6-写入数据"><a class="header" href="#6-写入数据">6. 写入数据</a></h2>
+<p>这一步很不一样，因为取决于 CPU 和网卡上的固件。
+如果网卡和 CPU 支持<a href="https://en.wikipedia.org/wiki/Direct_memory_access">直接内存访问</a>（这在所有现代系统上应该都有），
+那么网卡会直接把数据写到一组 OS 已经在主内存设置的缓冲区。
+在这样的系统上，网卡上的固件可能在数据写入内存时发出中断。
+<code>DMA</code> 十分高效，因为在数据已经在内存时，才会通知 CPU 。
+在旧系统上，CPU 需要投入资源来处理网卡的数据传输。</p>
+<p>DMAC （Direct Memory Access Controller 直接存储器存取控制器） 会控制内存访问。
+它不是 CPU 的一部分。我们已经够深入了，现在这些对我们来说不太重要，让我们继续往下。</p>
+<h2 id="7-驱动程序"><a class="header" href="#7-驱动程序">7. 驱动程序</a></h2>
+<p>驱动程序 (driver) 通常处理 OS 与网卡之间的通信。
+缓冲区已满时，网卡发出中断 (interrupt) 。然后 CPU 跳到中断的处理程序 (handler) 。
+这种中断类型的中断处理程序是由驱动程序注册的，因此实际上是驱动程序处理这个事件，
+然后通知内核数据已经准备好被读取。</p>
+<h2 id="8-读取数据"><a class="header" href="#8-读取数据">8. 读取数据</a></h2>
+<p>根据我们是选择 A、B 还是 C 选项，OS 将：</p>
+<ol type="A">
+<li>
+<p>唤起线程</p>
+</li>
+<li>
+<p>在下一次轮询 <code>poll</code> 时返回 <code>Ready</code></p>
+</li>
+<li>
+<p>唤起线程，并返回一个 <code>Read</code> 事件给我们注册的处理程序</p>
+</li>
+</ol>
+<h2 id="中断"><a class="header" href="#中断">中断</a></h2>
+<p>有两种中断方式：</p>
+<ol>
+<li>硬件中断 (Hardware Interrupts)</li>
+<li>软件终端 (Software Interrupts)</li>
+</ol>
+<p>它们具有不同的性质：</p>
+<h3 id="硬件中断"><a class="header" href="#硬件中断">硬件中断</a></h3>
+<p>硬件中断由 <a href="https://en.wikipedia.org/wiki/Interrupt_request_(PC_architecture)#x86_IRQs">IRQ (Interrupt Request Line)</a> 发送电信号创建。这些硬件线路直接向CPU发送信号。</p>
+<h3 id="软件中断"><a class="header" href="#软件中断">软件中断</a></h3>
+<p>从软件中断，而不是从硬件中断。
+在硬件中断的情况下，CPU跳转到中断描述符表并运行指定中断的处理程序。</p>
+<h3 id="固件"><a class="header" href="#固件">固件</a></h3>
+<p>固件 (firmware) 并没有得到我们大多数人的关注；然而，他们是我们所生活的世界的重要组成部分。
+它们运行在各种各样的硬件上，并且有各种奇怪和奇特的方法使我们编写程序的计算机工作。</p>
+<p>当我想到固件的时候，我会想到《星球大战》里的场景，他们走进酒吧，里面有各种奇怪而晦涩的生物。
+我想象固件的世界是这样的，很少有人知道它们在一个特定的系统上做什么或者如何工作。</p>
+<p>现在，固件需要微型控制器或类似的东西才能工作。甚至 CPU 也要有固件才能工作。
+这意味着在我们的系统中有比我们编程所针对的内核还有更多的小 CPUs 。</p>
+<p>为什么这很重要？好吧，你还记得并发是关于效率的吧？
+因为我们的系统中已经有很多 CPU 在为我们工作，所以我们的一个关注点是在编写代码时不要重复或复制这些工作。</p>
+<p>如果网卡的固件不断地检查新数据是否到达，那么如果我们再重复地让 CPU 不断地检查新数据是否到达，
+就将是相当浪费的。如果我们偶尔检查一下，或者在数据到达时及时通知，那就更好了。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="3_3_the_cpu_and_the_os.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="5_strategies_for_handling_io.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="3_3_the_cpu_and_the_os.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="5_strategies_for_handling_io.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+                <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-149686420-1', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+                <script type="text/javascript" src="theme/pagetoc.js"></script>
+        
+        
+    </body>
+</html>

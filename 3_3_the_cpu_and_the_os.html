@@ -1,0 +1,371 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>CPU 与 OS - 用 Rust 探索 Async</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+                <link rel="stylesheet" href="theme/pagetoc.css">
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">简介</a></li><li class="chapter-item expanded "><a href="1_concurrent_vs_parallel.html"><strong aria-hidden="true">1.</strong> 并发 vs 并行</a></li><li class="chapter-item expanded "><a href="2_async_history.html"><strong aria-hidden="true">2.</strong> 异步的历史</a></li><li class="chapter-item expanded "><a href="3_0_the_operating_system.html"><strong aria-hidden="true">3.</strong> OS 与 CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="3_1_communicating_with_the_os.html"><strong aria-hidden="true">3.1.</strong> 与 OS 通信</a></li><li class="chapter-item expanded "><a href="3_2_cross_platform_abstractions.html"><strong aria-hidden="true">3.2.</strong> 跨平台抽象</a></li><li class="chapter-item expanded "><a href="3_3_the_cpu_and_the_os.html" class="active"><strong aria-hidden="true">3.3.</strong> CPU 与 OS</a></li></ol></li><li class="chapter-item expanded "><a href="4_interrupts_firmware_io.html"><strong aria-hidden="true">4.</strong> 中断 | 固件 | I/O</a></li><li class="chapter-item expanded "><a href="5_strategies_for_handling_io.html"><strong aria-hidden="true">5.</strong> 处理 I/O 的策略</a></li><li class="chapter-item expanded "><a href="6_epoll_kqueue_iocp.html"><strong aria-hidden="true">6.</strong> Epoll | Kqueue | IOCP</a></li><li class="chapter-item expanded "><a href="7_0_introducing_our_main_example.html"><strong aria-hidden="true">7.</strong> 例子简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="7_1_what_is_node.html"><strong aria-hidden="true">7.1.</strong> 什么是 Node</a></li><li class="chapter-item expanded "><a href="7_2_whats_our_plan.html"><strong aria-hidden="true">7.2.</strong> 接下来的计划</a></li></ol></li><li class="chapter-item expanded "><a href="8_0_implementing_our_own_runtime.html"><strong aria-hidden="true">8.</strong> 实现自己的运行时</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="8_1_the_main_loop.html"><strong aria-hidden="true">8.1.</strong> 主循环</a></li><li class="chapter-item expanded "><a href="8_2_setting_up_runtime.html"><strong aria-hidden="true">8.2.</strong> 设置 runtime</a></li><li class="chapter-item expanded "><a href="8_3_timers.html"><strong aria-hidden="true">8.3.</strong> Timers</a></li><li class="chapter-item expanded "><a href="8_4_callbacks.html"><strong aria-hidden="true">8.4.</strong> Callbacks</a></li><li class="chapter-item expanded "><a href="8_5_threadpool.html"><strong aria-hidden="true">8.5.</strong> Threadpool</a></li><li class="chapter-item expanded "><a href="8_6_io_eventqueue.html"><strong aria-hidden="true">8.6.</strong> I/O 事件队列</a></li><li class="chapter-item expanded "><a href="8_8_cleaning_up.html"><strong aria-hidden="true">8.7.</strong> 清理</a></li><li class="chapter-item expanded "><a href="8_9_infrastructure.html"><strong aria-hidden="true">8.8.</strong> 基础设施</a></li></ol></li><li class="chapter-item expanded "><a href="9_0_modules.html"><strong aria-hidden="true">9.</strong> 模块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="9_1_file_module.html"><strong aria-hidden="true">9.1.</strong> 文件模块</a></li><li class="chapter-item expanded "><a href="9_2_crypto_module.html"><strong aria-hidden="true">9.2.</strong> 加密模块</a></li><li class="chapter-item expanded "><a href="9_3_http_module.html"><strong aria-hidden="true">9.3.</strong> Http 模块</a></li></ol></li><li class="chapter-item expanded "><a href="10_putting_pieces_together.html"><strong aria-hidden="true">10.</strong> 把代码组织起来</a></li><li class="chapter-item expanded "><a href="11_final_code.html"><strong aria-hidden="true">11.</strong> 最终代码</a></li><li class="chapter-item expanded "><a href="12_shortcuts_and_improvements.html"><strong aria-hidden="true">12.</strong> 捷径与改进</a></li><li class="chapter-item expanded affix "><a href="conclusion.html">总结</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">用 Rust 探索 Async</h1>
+
+                    <div class="right-buttons">
+                                                                        <a href="https://github.com/zjp-CN/exploring-async-basics-with-rust_zh" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="cpu-与-os-合作吗"><a class="header" href="#cpu-与-os-合作吗">CPU 与 OS 合作吗？</a></h1>
+<p>当我初次认为已经理解程序如何工作时，你若问我这个问题，我很可能回答，不，它们不会合作。
+我们在 CPU 上运行程序，而且只要知道怎么做，就可以做任何想做的事情。
+现在的话，首先我还没有想清楚，除非你知道从底层开始的工作机制，
+否则不是那么容易确切地知道这个问题的答案。</p>
+<p>让我开始意识到我回答错误的，是类似下面的代码：</p>
+<pre><pre class="playground"><code class="language-rust">#![feature(llvm_asm)]
+fn main() {
+    let t = 100;
+    let t_ptr: *const usize = &amp;t;
+    let x = dereference(t_ptr);
+
+    println!(&quot;{}&quot;, x);
+}
+
+fn dereference(ptr: *const usize) -&gt; usize {
+    let res: usize;
+    unsafe {
+        llvm_asm!(&quot;mov ($1), $0&quot;:&quot;=r&quot;(res): &quot;r&quot;(ptr))
+        };
+    res
+}
+</code></pre></pre>
+<blockquote>
+<p>这里使用汇编指令编写一个 dereference 函数。我们知道这里不可能牵涉到 OS 。</p>
+</blockquote>
+<p>这段代码会如期输出 <code>100</code> 。但现在，创建一个地址为 <code>99999999999999</code> 的指针，
+这不是一个有效的指针，看看传进同一个函数会发生什么。</p>
+<pre><pre class="playground"><code class="language-rust">#![feature(llvm_asm)]
+fn main() {
+    let t = 99999999999999 as *const usize;
+    let x = dereference(t);
+
+    println!(&quot;{}&quot;, x);
+}
+<span class="boring">fn dereference(ptr: *const usize) -&gt; usize {
+</span><span class="boring">    let res: usize;
+</span><span class="boring">    unsafe {
+</span><span class="boring">    llvm_asm!(&quot;mov ($1), $0&quot;:&quot;=r&quot;(res): &quot;r&quot;(ptr));
+</span><span class="boring">    }
+</span><span class="boring">
+</span><span class="boring">    res
+</span><span class="boring">}
+</span></code></pre></pre>
+<p>现在会得到一个分段错误 (segmentation fault) 。这不奇怪，但为何 CPU 知道不允许解引用这个内存呢？</p>
+<ul>
+<li>CPU 询问了 OS 这个进程在每次解引用时都有权访问这个内存地址吗？ </li>
+<li>这个过程会不会很慢？</li>
+<li>CPU 怎么知道它上面有个 OS 在运行呢？</li>
+<li>所有的 CPUs 都知道分段错误是什么吗？</li>
+<li>为什么我们得到一个错误信息，而不是单纯的崩溃 (crash) ？</li>
+</ul>
+<h1 id="深入研究"><a class="header" href="#深入研究">深入研究</a></h1>
+<p>事实证明，操作系统和CPU之间有大量的合作，但可能不是你天真地认为的那样。</p>
+<p>许多现代 CPUs 提供一些 OS 使用的基础设施。这些基础设施提供安全和稳定。
+实际上，大多数高级 CPUs 提供 OS （比如 Linux、 BSD、 Windows）实际使用的更多选项。</p>
+<p>这两点我想重点强调：</p>
+<ol>
+<li>CPU 如何防止不应该的内存访问</li>
+<li>CPU 如何处理 I/O 那样的异步事件</li>
+</ol>
+<p>本章会谈论一个问题，第二个问题放在下一章。</p>
+<blockquote>
+<p>如果你想了解更多细节，我强烈建议你阅读 
+<a href="https://os.phil-opp.com/">Philipp Oppermann： Writing an OS in Rust 系列</a> 。
+它写得很好，会回答上述所有问题，以及更多问题。</p>
+</blockquote>
+<h1 id="cpu-如何防止不应该的内存访问"><a class="header" href="#cpu-如何防止不应该的内存访问">CPU 如何防止不应该的内存访问</a></h1>
+<p>正如上面提到的，现代 CPUs 已经定义了一些基础概念。比如：</p>
+<ul>
+<li>虚拟内存 (virtual memory)</li>
+<li>页表 (page table)</li>
+<li>页面错误 (page fault)</li>
+<li>异常 (exceptions)</li>
+<li>优先级 (<a href="https://en.wikipedia.org/wiki/Protection_ring">privilege level</a>)</li>
+</ul>
+<p>具体如歌工作取决于具体的 CPU ，所以这里把这些视为一般意义上的术语。</p>
+<p>大多数现代 CPUs 有一个内存管理单元 (MMU, Memory Management Unit) 。
+MMU 的任务是将程序中使用的虚拟地址转换为物理地址。</p>
+<p>当 OS 开启一个进程（比如我们编写的程序），这会给进程建立一个页表，
+而且会确保 CPU 上的某个特殊寄存器指向这个页表。</p>
+<p>上面的代码中，我们解引用 <code>t_ptr</code> 时，某个时刻这个地址已经传入 MMU ，
+MMU 在页表查找地址、把它转换成内存里的物理地址，而这个地址能获取到数据。</p>
+<p>在第一个例子中，它指向栈上拥有 <code>100</code> 这个值的内存地址。</p>
+<p>在第二个例子中，传入 <code>99999999999999</code> ，要求获取这个地址（解引用）的数据时，
+在页表中查找转换后的地址，结果没能找到。然后 CPU 把这视为一个 “页面错误” 。</p>
+<p>系统启动时，OS 给 CPU 提供一个中断描述符表 (Interrupt Descriptor Table) 。
+这个表具有预定义的格式，OS 据此对 CPU 可能遇到的预定义的异常提供处理程序。</p>
+<p>由于 OS 提供处理页面错误的函数指针，当试图解引用 <code>99999999999999</code> 地址时，
+CPU 跳转到那个函数，从而把控制权交给 OS 。</p>
+<p>然后 OS 很好地打印了信息，让我们知道遇到了一个叫 <code>segmentation fault</code> 的异常信息。
+所以在代码运行的不同 OS 上，这个信息会不一样。</p>
+<h1 id="我们不能改变-cpu-里的页表吗"><a class="header" href="#我们不能改变-cpu-里的页表吗">我们不能改变 CPU 里的页表吗？</a></h1>
+<p>这是优先级 (Privilege Level) 发挥作用的时候了。大多数现代 OS 有两个环形等级 (Ring Levels)：
+内核空间 Ring 0 和用户空间 Ring 3 。</p>
+<!-- ![Privilege rings](./images/priv_rings.png) -->
+<img src="./images/priv_rings.png" width = "40%" height = "40%" alt="Privilege rings" align=center />
+<p>大多数 CPUs 概念上有多于大多数 OS 使用的环形。
+这有历史原因的，也正是这个原因使用 <code>Ring 0</code> 和 <code>Ring 3</code> 而不是 1 和 2 。</p>
+<p>现在，页表中的每个条目都有关于它的额外信息，
+其中包括关于它所属的环形的信息。此信息是在 OS 启动时设置的。</p>
+<p>在 <code>Ring 0</code> 中执行的代码几乎可以不受限制地访问外部设备和内存，
+并且可以自由更改硬件级别所提供安全性的寄存器。</p>
+<p>你在 <code>Ring 3</code> 中编写的代码通常对 I/O 和某些 CPU寄 存器（以及指令）的访问极为有限。
+尝试 CPU 已经阻止从 <code>Ring 3</code> 级别发出指令或设置寄存器来更改页表。
+然后，CPU 将此视为异常，并跳转到 OS 提供的异常处理程序。</p>
+<p>这也是你除了通过系统调用与 OS 合作并处理 I/O 任务之外，别无选择的原因。
+如果不是这样，系统就会很不安全。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="3_2_cross_platform_abstractions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="4_interrupts_firmware_io.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="3_2_cross_platform_abstractions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="4_interrupts_firmware_io.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+                <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-149686420-1', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+                <script type="text/javascript" src="theme/pagetoc.js"></script>
+        
+        
+    </body>
+</html>

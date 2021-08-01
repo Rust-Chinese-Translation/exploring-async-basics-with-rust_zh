@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Epoll | Kqueue | IOCP - 用 Rust 探索 Async</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+                <link rel="stylesheet" href="theme/pagetoc.css">
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">简介</a></li><li class="chapter-item expanded "><a href="1_concurrent_vs_parallel.html"><strong aria-hidden="true">1.</strong> 并发 vs 并行</a></li><li class="chapter-item expanded "><a href="2_async_history.html"><strong aria-hidden="true">2.</strong> 异步的历史</a></li><li class="chapter-item expanded "><a href="3_0_the_operating_system.html"><strong aria-hidden="true">3.</strong> OS 与 CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="3_1_communicating_with_the_os.html"><strong aria-hidden="true">3.1.</strong> 与 OS 通信</a></li><li class="chapter-item expanded "><a href="3_2_cross_platform_abstractions.html"><strong aria-hidden="true">3.2.</strong> 跨平台抽象</a></li><li class="chapter-item expanded "><a href="3_3_the_cpu_and_the_os.html"><strong aria-hidden="true">3.3.</strong> CPU 与 OS</a></li></ol></li><li class="chapter-item expanded "><a href="4_interrupts_firmware_io.html"><strong aria-hidden="true">4.</strong> 中断 | 固件 | I/O</a></li><li class="chapter-item expanded "><a href="5_strategies_for_handling_io.html"><strong aria-hidden="true">5.</strong> 处理 I/O 的策略</a></li><li class="chapter-item expanded "><a href="6_epoll_kqueue_iocp.html" class="active"><strong aria-hidden="true">6.</strong> Epoll | Kqueue | IOCP</a></li><li class="chapter-item expanded "><a href="7_0_introducing_our_main_example.html"><strong aria-hidden="true">7.</strong> 例子简介</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="7_1_what_is_node.html"><strong aria-hidden="true">7.1.</strong> 什么是 Node</a></li><li class="chapter-item expanded "><a href="7_2_whats_our_plan.html"><strong aria-hidden="true">7.2.</strong> 接下来的计划</a></li></ol></li><li class="chapter-item expanded "><a href="8_0_implementing_our_own_runtime.html"><strong aria-hidden="true">8.</strong> 实现自己的运行时</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="8_1_the_main_loop.html"><strong aria-hidden="true">8.1.</strong> 主循环</a></li><li class="chapter-item expanded "><a href="8_2_setting_up_runtime.html"><strong aria-hidden="true">8.2.</strong> 设置 runtime</a></li><li class="chapter-item expanded "><a href="8_3_timers.html"><strong aria-hidden="true">8.3.</strong> Timers</a></li><li class="chapter-item expanded "><a href="8_4_callbacks.html"><strong aria-hidden="true">8.4.</strong> Callbacks</a></li><li class="chapter-item expanded "><a href="8_5_threadpool.html"><strong aria-hidden="true">8.5.</strong> Threadpool</a></li><li class="chapter-item expanded "><a href="8_6_io_eventqueue.html"><strong aria-hidden="true">8.6.</strong> I/O 事件队列</a></li><li class="chapter-item expanded "><a href="8_8_cleaning_up.html"><strong aria-hidden="true">8.7.</strong> 清理</a></li><li class="chapter-item expanded "><a href="8_9_infrastructure.html"><strong aria-hidden="true">8.8.</strong> 基础设施</a></li></ol></li><li class="chapter-item expanded "><a href="9_0_modules.html"><strong aria-hidden="true">9.</strong> 模块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="9_1_file_module.html"><strong aria-hidden="true">9.1.</strong> 文件模块</a></li><li class="chapter-item expanded "><a href="9_2_crypto_module.html"><strong aria-hidden="true">9.2.</strong> 加密模块</a></li><li class="chapter-item expanded "><a href="9_3_http_module.html"><strong aria-hidden="true">9.3.</strong> Http 模块</a></li></ol></li><li class="chapter-item expanded "><a href="10_putting_pieces_together.html"><strong aria-hidden="true">10.</strong> 把代码组织起来</a></li><li class="chapter-item expanded "><a href="11_final_code.html"><strong aria-hidden="true">11.</strong> 最终代码</a></li><li class="chapter-item expanded "><a href="12_shortcuts_and_improvements.html"><strong aria-hidden="true">12.</strong> 捷径与改进</a></li><li class="chapter-item expanded affix "><a href="conclusion.html">总结</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">用 Rust 探索 Async</h1>
+
+                    <div class="right-buttons">
+                                                                        <a href="https://github.com/zjp-CN/exploring-async-basics-with-rust_zh" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="epoll-kqueue-和-iocp"><a class="header" href="#epoll-kqueue-和-iocp">Epoll, Kqueue 和 IOCP</a></h1>
+<p>有一些著名的库分别使用 Epoll、Kqueue 和 IOCP 为 Linux、Mac 和 Windows 实现了跨平台事件队列。</p>
+<p>Node 的运行时有一部分基于 <a href="https://github.com/libuv/libuv">libuv</a> ，这是一个跨平台的异步 I/O 库。
+<code>libuv</code> 不仅在 Node 中使用，还构成了
+<a href="https://julialang.org/">Julia</a> 和 <a href="https://github.com/saghul/pyuv">Pyuv</a> 
+实现跨平台的基础事件队列；大多数语言都有绑定 <code>libuv</code> 。</p>
+<p>在 Rust 中，我们有 <a href="https://github.com/tokio-rs/mio">mio: Metal IO</a>。
+<code>Mio</code> 为 <a href="https://github.com/tokio-rs/tokio">tokio</a> 中使用的操作系统事件队列提供支持，
+这是一个提供 I/O 、网络、调度等功能的运行时。
+<code>Mio</code> 对于 <code>tokio</code> 正如 <code>libuv</code> 对于 <code>Node</code> 那样重要。</p>
+<p><code>tokio</code> 为许多 Web 框架提供支持，其中包括众所周知的、非常高效的
+<a href="https://github.com/actix/actix-web">Actix Web</a> 。</p>
+<p>由于我们想了解一切是如何工作的，我决定写一个极其简化的事件队列版本。
+我称它为 <code>minimio</code> ，因为它极大地受到了 <code>mio</code> 的启发。</p>
+<blockquote>
+<p>我在 <a href="https://cfsamsonbooks.gitbook.io/epoll-kqueue-IOCP-explained">Epoll, Kqueue and IOCP explained</a> 一书中详细描述了它们是如何工作的，而且在那本书中，
+我还写了一个将在本书中用作跨平台的事件循环。如果你很好奇的话，可以访问
+<a href="https://github.com/cfsamson/examples-minimio">github repo</a> 中的代码。</p>
+</blockquote>
+<p>尽管如此，本书还是会简要介绍它们，以便你了解基础知识。</p>
+<h1 id="为什么使用-os-支持的事件队列"><a class="header" href="#为什么使用-os-支持的事件队列">为什么使用 OS 支持的事件队列？</a></h1>
+<p>如果您还记得之前的章节，您就会知道我们需要与操作系统密切合作，以使 I/O 操作尽可能高效。
+像 Linux、Macos 和 Windows 这样的操作系统提供了几种执行 I/O 的方式，包括阻塞和非阻塞。</p>
+<p>所以阻塞操作对我们程序员来说是最不灵活的，因为我们将控制权交给操作系统，它挂起我们的线程。
+最大的优点是一旦我们等待的事件准备好，我们的线程就会被唤醒。</p>
+<p>非阻塞方法更灵活，但需要有一种方法来告诉我们任务是否准备就绪。
+这通常是通过返回某种数据来完成的，这些数据表明它是“准备好” <code>Ready</code> 还是“未准备好” <code>NotReady</code> 。
+一个缺点是我们需要定期检查此状态才能判断状态是否已更改。</p>
+<p>通过 Epoll/Kqueue/IOCP 进行事件队列发挥了非阻塞方法的灵活性，且没有上述缺点。</p>
+<blockquote>
+<p>这里不会介绍 <code>poll</code> 和 <code>select</code> 之类的方法，但如果你想了解一下这些方法以及它们与 <code>epoll</code> 的区别，
+你可以看看这篇 <a href="http://web.archive.org/web/20190112082733/https://people.eecs.berkeley.edu/%7Esangjin/2012/12/21/epoll-vs-kqueue.html">文章：epoll-vs-kqueue</a> 。</p>
+</blockquote>
+<h1 id="基于就绪状态的事件队列"><a class="header" href="#基于就绪状态的事件队列">基于就绪状态的事件队列</a></h1>
+<p>Epoll 和 Kqueue 被称为基于就绪状态 (Ready-based) 的事件队列，
+这意味着它们会让您知道何时准备执行操作。
+一个例子是准备好被读取的 socket 。</p>
+<p><strong>当我们想使用 epoll/kqueue 从 socket 读取数据时，基本上会发生如下情况：</strong></p>
+<ol>
+<li>我们通过调用系统调用 <code>epoll_create</code> 或 <code>kqueue</code> 来创建一个事件队列。 </li>
+<li>我们向操作系统询问代表网络 socket 的文件描述符。 </li>
+<li>通过另一个系统调用，我们在这个 socket 上注册了对感兴趣的 <code>Read</code> 事件。
+重要的是，我们还通知操作系统，当事件在我们在 (1) 中创建的事件队列中准备就绪时，我们将收到通知。 </li>
+<li>接下来，我们调用 <code>epoll_wait</code> 或 <code>kevent</code> 来等待一个事件。这将阻塞（挂起）事件被调用的线程。 </li>
+<li>当事件准备好时，线程被解除阻塞（恢复），我们从“等待”调用中返回事件发生的数据。 </li>
+<li>在 (2) 中创建的 socket 上调用 <code>read</code>。</li>
+</ol>
+<h1 id="基于完成状态的事件队列"><a class="header" href="#基于完成状态的事件队列">基于完成状态的事件队列</a></h1>
+<p>IOCP (Input/Output Completion Port) 代表 I/O 完成端口，
+是一个基于完成状态 (completion-based) 的事件队列。
+这种类型的队列会在事件完成时通知您。一个例子是数据被读入缓冲区。</p>
+<p>以下是此类事件队列中发生的情况的基本细分：</p>
+<ol>
+<li>我们通过调用 <code>CreateIoCompletionPort</code> 这个系统调用来创建一个事件队列。 </li>
+<li>我们创建一个缓冲区，并要求操作系统给我们一个 socket 的句柄 (handle) 。 </li>
+<li>我们使用另一个系统调用在这个 socket 上注册感兴趣的 <code>read</code> 事件，
+但这次我们也传入了我们在 (2) 中创建的缓冲区，数据将被读取到该缓冲区。 </li>
+<li>接下来，我们调用 <code>GetQueuedCompletionStatusEx</code> ，它将阻塞线程直到事件完成。 </li>
+<li>我们的线程被解除阻塞，缓冲区现在存满了我们感兴趣的数据。</li>
+</ol>
+<h1 id="epoll"><a class="header" href="#epoll">Epoll</a></h1>
+<p><code>epoll</code> 是 Linux 实现事件队列的方式。在功能方面，它与 <code>kqueue</code> 有很多共同点。
+在 Linux 上使用 <code>epoll</code> 比使用 <code>select</code> 或 <code>poll</code> 等其他类似方法的优势在于
+<code>epoll</code> 旨在非常有效地处理大量事件。</p>
+<h2 id="kqueue"><a class="header" href="#kqueue">Kqueue</a></h2>
+<p><code>kqueue</code> 是 macOS 实现事件队列的方式，起源于 BSD ，存在于 FreeBSD、OpenBSD 等操作系统中。
+从高层次的功能来看，它在概念上与 <code>epoll</code> 类似，但在实际使用上有所不同。</p>
+<p>有些人认为它使用起来更复杂，更抽象和“通用”。</p>
+<h2 id="iocp"><a class="header" href="#iocp">IOCP</a></h2>
+<p><code>IOCP</code> （Input/Output Completion Port，输入输出完成端口）是 Windows 处理此类事件队列的方式。</p>
+<p>“完成端口”会在事件“完成”时通知您。现在这听起来可能是一个微小的区别，但事实并非如此。
+当您想编写一个库时，这一点尤其明显，因为对两者进行抽象意味着您必须将
+<code>IOCP</code> 基于就绪状态进行建模 (readiness-based) 或将 
+<code>epoll/kqueue</code> 基于完成状态的建模 (completion-based) 。</p>
+<p>将缓冲区借给操作系统也带来了一些挑战，因为在等待操作返回时，该缓冲区保持不变这一点非常重要。</p>
+<blockquote>
+<p>我对此进行了研究，我的经验是：相比其他方式，
+让“基于就绪状态”的模型表现得像“基于完成状态”的模型更容易。
+这意味着您应该首先让 IOCP 工作，然后将 <code>epoll</code> 或 <code>kqueue</code> 加入该设计中。</p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="5_strategies_for_handling_io.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="7_0_introducing_our_main_example.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="5_strategies_for_handling_io.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="7_0_introducing_our_main_example.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+                <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-149686420-1', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+                <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+                <script type="text/javascript" src="theme/pagetoc.js"></script>
+        
+        
+    </body>
+</html>
