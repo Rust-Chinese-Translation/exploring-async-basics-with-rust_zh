@@ -1,4 +1,4 @@
-# The main loop
+# 主循环
 
 Let's put our event loop logic in the `run` function of our `Runtime`. The code
 which we present on this chapter is the body of this `run` function.
